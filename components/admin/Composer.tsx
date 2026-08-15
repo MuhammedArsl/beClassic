@@ -1,0 +1,151 @@
+'use client'
+
+import { useActionState, useEffect, useRef, useState } from 'react'
+import { logIncoming, sendReply, type ActionResult } from '@/app/admin/actions'
+import ActionFeedback from './ActionFeedback'
+
+/**
+ * Eingabefeld für den Nachrichtenverlauf — mit zwei Betriebsarten:
+ *
+ *   Antworten          → geht per E-Mail an den Kunden und in den Verlauf
+ *   Eingang festhalten → nur in den Verlauf, für Antworten die per Telefon
+ *                        oder direkt per E-Mail kamen
+ *
+ * Ohne die zweite Variante hätte der Verlauf Lücken, sobald ein Gespräch
+ * ausserhalb des Systems stattfindet.
+ */
+
+type Mode = 'antwort' | 'eingang'
+
+export default function Composer({
+  inquiryId,
+  customerEmail,
+  mailConfigured,
+}: {
+  inquiryId: string
+  customerEmail: string
+  mailConfigured: boolean
+}) {
+  const [mode, setMode] = useState<Mode>('antwort')
+
+  const [replyState, replyAction, replyPending] = useActionState<
+    ActionResult | null,
+    FormData
+  >(sendReply, null)
+
+  const [incomingState, incomingAction, incomingPending] = useActionState<
+    ActionResult | null,
+    FormData
+  >(logIncoming, null)
+
+  const isReply = mode === 'antwort'
+  const state = isReply ? replyState : incomingState
+  const pending = isReply ? replyPending : incomingPending
+
+  const formRef = useRef<HTMLFormElement>(null)
+  const [draft, setDraft] = useState('')
+
+  // Nach erfolgreichem Absenden das Feld leeren — sonst steht der eben
+  // gesendete Text noch einmal da und wird versehentlich doppelt geschickt.
+  useEffect(() => {
+    if (state?.ok) {
+      setDraft('')
+      formRef.current?.reset()
+    }
+  }, [state])
+
+  return (
+    <div className="border border-line bg-shell/40 p-6">
+      {/* Umschalter */}
+      <div className="flex gap-2" role="tablist">
+        <ModeButton
+          active={isReply}
+          onClick={() => setMode('antwort')}
+          label="Antworten"
+        />
+        <ModeButton
+          active={!isReply}
+          onClick={() => setMode('eingang')}
+          label="Eingang festhalten"
+        />
+      </div>
+
+      <form
+        ref={formRef}
+        action={isReply ? replyAction : incomingAction}
+        className="mt-5"
+        // key erzwingt ein frisches Formular beim Wechsel der Betriebsart,
+        // damit keine Rückmeldung der anderen Variante stehen bleibt.
+        key={mode}
+      >
+        <input type="hidden" name="id" value={inquiryId} />
+
+        <label htmlFor="body" className="sr-only">
+          {isReply ? 'Antwort an den Kunden' : 'Eingegangene Nachricht'}
+        </label>
+        <textarea
+          id="body"
+          name="body"
+          value={draft}
+          onChange={(event) => setDraft(event.target.value)}
+          rows={6}
+          required
+          placeholder={
+            isReply
+              ? `Ihre Antwort an ${customerEmail} …`
+              : 'Was der Kunde per Telefon oder E-Mail mitgeteilt hat …'
+          }
+          className="w-full resize-y border border-line bg-cream px-4 py-3 text-[0.9375rem] leading-relaxed text-ink outline-none transition-colors duration-300 placeholder:text-mist/70 focus:border-ink"
+        />
+
+        <div className="mt-4 flex flex-wrap items-center justify-between gap-4">
+          <p className="text-[0.8125rem] text-mist">
+            {isReply
+              ? mailConfigured
+                ? `Geht per E-Mail an ${customerEmail}.`
+                : 'Kein E-Mail-Versand eingerichtet — wird nur im Verlauf gespeichert.'
+              : 'Wird nur im Verlauf gespeichert, es geht nichts raus.'}
+          </p>
+
+          <button
+            type="submit"
+            disabled={pending || draft.trim().length === 0}
+            className="bg-ink px-6 py-3 text-[0.8125rem] uppercase tracking-[0.18em] text-cream transition-opacity duration-300 hover:opacity-85 disabled:opacity-40"
+          >
+            {pending
+              ? 'Einen Moment …'
+              : isReply
+                ? 'Antwort senden'
+                : 'Festhalten'}
+          </button>
+        </div>
+
+        <ActionFeedback state={state} />
+      </form>
+    </div>
+  )
+}
+
+function ModeButton({
+  active,
+  onClick,
+  label,
+}: {
+  active: boolean
+  onClick: () => void
+  label: string
+}) {
+  return (
+    <button
+      type="button"
+      role="tab"
+      aria-selected={active}
+      onClick={onClick}
+      className={`px-4 py-2 text-[0.8125rem] uppercase tracking-[0.12em] transition-colors duration-300 ${
+        active ? 'bg-ink text-cream' : 'text-mist ring-1 ring-inset ring-line hover:text-ink'
+      }`}
+    >
+      {label}
+    </button>
+  )
+}

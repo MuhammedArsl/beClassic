@@ -1,29 +1,21 @@
 import { NextResponse } from 'next/server'
+import { createInquiry, occasionLabel, formatDate } from '@/lib/inquiries'
+import { sendMail } from '@/lib/mail'
+import { site } from '@/data/site'
 
 /**
  * Endpunkt für das Anfrageformular.
  *
- * AKTUELLER STAND
- *   Die Anfrage wird serverseitig validiert und in der Server-Konsole
- *   ausgegeben. Es wird noch KEINE E-Mail versendet — das Formular ist damit
- *   vollständig bedienbar, ohne dass Zugangsdaten hinterlegt sein müssen.
+ * ABLAUF
+ *   1. Vier Stufen Spam-Schutz (Honeypot, Tempo, Rate-Limit, Turnstile)
+ *   2. Serverseitige Prüfung der Pflichtfelder
+ *   3. Speichern in Supabase — die Anfrage erscheint danach im Dashboard
+ *      unter /admin
+ *   4. Benachrichtigung an den Betreiber (nur falls RESEND_API_KEY gesetzt)
  *
- * >>> E-MAIL-VERSAND AKTIVIEREN (Beispiel: Resend)
- *   1. npm install resend
- *   2. In .env.local hinterlegen:
- *        RESEND_API_KEY=re_xxx
- *        ANFRAGE_EMPFAENGER=deine@adresse.de
- *   3. Den markierten Block unten einkommentieren.
- *
- *   import { Resend } from 'resend'
- *   const resend = new Resend(process.env.RESEND_API_KEY)
- *   await resend.emails.send({
- *     from: 'BeClassic <anfrage@deine-domain.de>',
- *     to: process.env.ANFRAGE_EMPFAENGER!,
- *     replyTo: data.email,
- *     subject: `Neue Anfrage: ${data.occasion} — ${data.firstName} ${data.lastName}`,
- *     text: buildEmailText(data),
- *   })
+ *   Ist Supabase nicht eingerichtet, wird die Anfrage wie bisher nur in der
+ *   Server-Konsole protokolliert. Die Seite bleibt dadurch ohne
+ *   Zugangsdaten voll bedienbar — siehe lib/supabase.ts.
  */
 
 interface InquiryPayload {
@@ -242,11 +234,61 @@ export async function POST(request: Request) {
     )
   }
 
-  // TODO: Hier den E-Mail-Versand einsetzen (siehe Kommentar oben).
-  console.log('[BeClassic] Neue Anfrage:', {
-    ...data,
-    eingegangen: new Date().toISOString(),
-  })
+  /* Speichern. Schlägt das fehl, darf der Absender KEINE Bestätigung sehen —
+     sonst hält er seine Anfrage für angekommen, obwohl sie verloren ist. */
+  try {
+    const inquiry = await createInquiry(data)
 
-  return NextResponse.json({ ok: true })
+    if (!inquiry) {
+      // Supabase ist nicht eingerichtet — Anfrage wenigstens protokollieren.
+      console.log('[BeClassic] Neue Anfrage (nicht gespeichert, kein Supabase):', {
+        ...data,
+        eingegangen: new Date().toISOString(),
+      })
+      return NextResponse.json({ ok: true })
+    }
+
+    /* Benachrichtigung an den Betreiber. Bewusst nach dem Speichern und
+       ohne Auswirkung auf die Antwort: Die Anfrage liegt bereits sicher in
+       der Datenbank und ist im Dashboard sichtbar, auch wenn keine Mail
+       rausgeht. */
+    const empfaenger = process.env.ANFRAGE_EMPFAENGER
+    if (empfaenger) {
+      const zusammenfassung = [
+        `${data.firstName} ${data.lastName}`,
+        `E-Mail:  ${data.email}`,
+        `Telefon: ${data.phone}`,
+        '',
+        `Anlass:      ${occasionLabel(data.occasion)}`,
+        `Wunschdatum: ${formatDate(data.startDate)}`,
+        ...(data.endDate ? [`Rückgabe:    ${formatDate(data.endDate)}`] : []),
+        ...(data.vehicle ? [`Fahrzeug:    ${data.vehicle}`] : []),
+        ...(data.pickupLocation ? [`Abholort:    ${data.pickupLocation}`] : []),
+        ...(data.message ? ['', 'Nachricht:', data.message] : []),
+        '',
+        `Im Dashboard öffnen: ${site.url}/admin/anfrage/${inquiry.id}`,
+      ].join('\n')
+
+      const mail = await sendMail({
+        to: empfaenger,
+        replyTo: data.email,
+        subject: `Neue Anfrage: ${occasionLabel(data.occasion)} — ${data.firstName} ${data.lastName}`,
+        text: zusammenfassung,
+      })
+
+      if (!mail.sent) {
+        console.warn('[BeClassic] Benachrichtigung nicht versendet:', mail.error)
+      }
+    }
+
+    return NextResponse.json({ ok: true })
+  } catch (error) {
+    console.error('[BeClassic] Anfrage konnte nicht gespeichert werden:', error)
+    return NextResponse.json(
+      {
+        error: `Ihre Anfrage konnte gerade nicht entgegengenommen werden. Bitte versuchen Sie es in einigen Minuten erneut oder schreiben Sie uns direkt an ${site.contact.email}.`,
+      },
+      { status: 500 },
+    )
+  }
 }
