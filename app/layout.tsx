@@ -27,17 +27,22 @@ export const metadata: Metadata = {
     template: `%s — ${site.name}`,
   },
   description: site.description,
+  // Die Begriffe zielen bewusst auf Wien und Österreich — dort steht das
+  // Fahrzeug, und ohne Ortsbezug konkurriert die Seite sinnlos mit dem
+  // gesamten deutschsprachigen Raum.
   keywords: [
-    'Oldtimer mieten',
-    'Hochzeitsauto',
-    'Klassiker Vermietung',
+    'Oldtimer mieten Wien',
+    'Hochzeitsauto Wien',
+    'Oldtimer Hochzeit Österreich',
+    'Klassiker Vermietung Wien',
     'MG MGA mieten',
-    'Oldtimer Fotoshooting',
-    'Filmfahrzeug mieten',
+    'MG MGA 1500 mieten',
+    'Oldtimer Fotoshooting Wien',
+    'Filmfahrzeug mieten Österreich',
   ],
   openGraph: {
     type: 'website',
-    locale: 'de_DE',
+    locale: 'de_AT',
     url: site.url,
     siteName: site.name,
     title: `${site.name} — Klassische Fahrzeuge für besondere Momente`,
@@ -61,7 +66,7 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="de" className={`${cormorant.variable} ${jost.variable}`}>
+    <html lang="de-AT" className={`${cormorant.variable} ${jost.variable}`}>
       <body className="antialiased">
         <a
           href="#inhalt"

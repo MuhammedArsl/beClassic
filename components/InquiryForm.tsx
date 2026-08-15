@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { occasionOptions, site } from '@/data/site'
 import type { Vehicle } from '@/lib/types'
 import CTAButton from './CTAButton'
+import Process from './Process'
 import Reveal from './Reveal'
 import Turnstile from './Turnstile'
 
@@ -199,7 +200,7 @@ export default function InquiryForm({
                 <div className="flex items-center gap-4">
                   {showIndex && (
                     <span className="text-[0.8125rem] tracking-[0.28em] text-champagne">
-                      05
+                      03
                     </span>
                   )}
                   <span aria-hidden="true" className="h-px w-10 bg-line-strong" />
@@ -223,8 +224,17 @@ export default function InquiryForm({
                 </p>
               </Reveal>
 
-              <Reveal delay={320}>
-                <div className="mt-12 border-t border-line pt-8">
+              {/* Der Ablauf steht hier statt in einer eigenen Sektion —
+                  er beantwortet die Frage, die genau an dieser Stelle
+                  aufkommt: was passiert nach dem Absenden? */}
+              <Reveal delay={300}>
+                <div className="mt-12">
+                  <Process />
+                </div>
+              </Reveal>
+
+              <Reveal delay={380}>
+                <div className="mt-10 border-t border-line pt-8">
                   <p className="eyebrow">Direkter Kontakt</p>
                   <div className="mt-5 space-y-2">
                     <a

@@ -11,8 +11,19 @@ export const metadata: Metadata = {
 
 /**
  * >>> WICHTIG: Dies ist eine Struktur-Vorlage, kein fertiger Rechtstext.
- * Bitte durch die eigenen Angaben ersetzen und vor dem Livegang anwaltlich
- * bzw. über einen Impressumsgenerator prüfen lassen.
+ * Bitte durch die eigenen Angaben ersetzen und vor dem Livegang prüfen
+ * lassen — die WKO bietet Mitgliedern dafür einen kostenlosen
+ * Impressum-Generator und eine Rechtsberatung an.
+ *
+ * RECHTSRAHMEN ÖSTERREICH
+ *   Die Offenlegungspflichten ergeben sich aus mehreren Gesetzen zugleich:
+ *     § 5 ECG    — Informationspflichten für Diensteanbieter im Internet
+ *     § 25 MedienG — Offenlegung für wiederkehrende elektronische Medien
+ *     § 14 UGB   — Angaben für im Firmenbuch eingetragene Unternehmen
+ *   Ein gewerblicher Fahrzeugverleih ist in Österreich zusätzlich
+ *   gewerberechtlich gebunden (GewO 1994): Gewerbewortlaut, Bezirks-
+ *   verwaltungsbehörde und Wirtschaftskammer-Zugehörigkeit gehören ins
+ *   Impressum.
  */
 export default function ImpressumPage() {
   return (
@@ -23,7 +34,7 @@ export default function ImpressumPage() {
         title="Impressum"
         note="Vorlage — bitte durch die eigenen Angaben ersetzen und rechtlich prüfen lassen."
       >
-        <h2>Angaben gemäß § 5 DDG</h2>
+        <h2>Angaben gemäß § 5 ECG und § 25 MedienG</h2>
         <p>
           {site.name}
           <br />
@@ -34,8 +45,16 @@ export default function ImpressumPage() {
           {site.contact.address.country}
         </p>
 
-        <h2>Vertreten durch</h2>
-        <p>[Vor- und Nachname der vertretungsberechtigten Person]</p>
+        <h2>Inhaber / vertretungsbefugte Person</h2>
+        <p>[Vor- und Nachname]</p>
+
+        <h2>Unternehmensgegenstand</h2>
+        <p>
+          Vermietung von klassischen Kraftfahrzeugen ohne Beistellung eines
+          Lenkers.
+          <br />
+          [Gewerbewortlaut laut Gewerbeschein eintragen]
+        </p>
 
         <h2>Kontakt</h2>
         <p>
@@ -44,39 +63,58 @@ export default function ImpressumPage() {
           E-Mail: {site.contact.email}
         </p>
 
+        <h2>Firmenbuch</h2>
+        <p>
+          [Firmenbuchnummer und Firmenbuchgericht eintragen — entfällt bei
+          nicht eingetragenen Einzelunternehmen]
+        </p>
+
         <h2>Umsatzsteuer-Identifikationsnummer</h2>
         <p>
-          Umsatzsteuer-Identifikationsnummer gemäß § 27 a Umsatzsteuergesetz:
+          [UID-Nummer im Format ATU00000000 eintragen — oder Hinweis auf die
+          Kleinunternehmerbefreiung gemäß § 6 Abs. 1 Z 27 UStG]
+        </p>
+
+        <h2>Gewerbebehörde</h2>
+        <p>
+          [Zuständige Bezirksverwaltungsbehörde eintragen — in Wien das
+          Magistratische Bezirksamt des jeweiligen Bezirks]
+        </p>
+
+        <h2>Kammerzugehörigkeit</h2>
+        <p>
+          Mitglied der Wirtschaftskammer Österreich,
           <br />
-          [USt-IdNr. eintragen — oder Hinweis auf Kleinunternehmerregelung
-          gemäß § 19 UStG]
+          [zuständige Landeskammer und Fachgruppe eintragen]
+          <br />
+          Anwendbare Rechtsvorschrift: Gewerbeordnung 1994 (GewO), abrufbar
+          unter ris.bka.gv.at
         </p>
 
-        <h2>Redaktionell verantwortlich</h2>
+        <h2>Online-Streitbeilegung</h2>
         <p>
-          [Name und Anschrift der verantwortlichen Person, sofern von den
-          Angaben oben abweichend]
-        </p>
-
-        <h2>Verbraucherstreitbeilegung</h2>
-        <p>
-          Wir sind nicht bereit und nicht verpflichtet, an
-          Streitbeilegungsverfahren vor einer Verbraucherschlichtungsstelle
-          teilzunehmen.
+          Bei Streitigkeiten aus einem Online-Vertrag können sich Verbraucher
+          an die Internet Ombudsstelle wenden (ombudsstelle.at). Wir sind
+          weder bereit noch verpflichtet, an Streitbeilegungsverfahren vor
+          einer Verbraucherschlichtungsstelle teilzunehmen.
         </p>
 
         <h2>Haftung für Inhalte</h2>
         <p>
-          Als Diensteanbieter sind wir gemäß § 7 Abs. 1 DDG für eigene Inhalte
-          auf diesen Seiten nach den allgemeinen Gesetzen verantwortlich. Nach
-          §§ 8 bis 10 DDG sind wir als Diensteanbieter jedoch nicht
-          verpflichtet, übermittelte oder gespeicherte fremde Informationen zu
-          überwachen oder nach Umständen zu forschen, die auf eine rechtswidrige
-          Tätigkeit hinweisen.
+          Die Inhalte dieser Website wurden mit Sorgfalt erstellt. Für die
+          Richtigkeit, Vollständigkeit und Aktualität wird keine Gewähr
+          übernommen. Als Diensteanbieter sind wir gemäß §§ 13 bis 18 ECG
+          nicht verpflichtet, übermittelte oder gespeicherte fremde
+          Informationen zu überwachen oder nach Umständen zu forschen, die
+          auf eine rechtswidrige Tätigkeit hinweisen.
         </p>
 
         <h2>Bildnachweise</h2>
-        <p>[Fotograf / Bildquellen eintragen]</p>
+        <p>
+          Sämtliche Fahrzeugaufnahmen: [Name des Fotografen eintragen].
+          <br />
+          Die abgebildete Person hat der Veröffentlichung zugestimmt.
+        </p>
       </LegalPage>
       <Footer />
     </>

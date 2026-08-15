@@ -90,7 +90,40 @@ export default function DatenschutzPage() {
           cloudflare.com/privacypolicy]
         </p>
 
-        <h2>5. Schriftarten</h2>
+        <h2>5. Speicherung und Bearbeitung Ihrer Anfrage</h2>
+        <p>
+          Ihre Anfrage und der anschließende Nachrichtenverlauf werden in einer
+          Datenbank des Anbieters <strong>Supabase</strong> gespeichert, damit
+          wir Ihr Anliegen nachvollziehbar bearbeiten und auf Rückfragen
+          antworten können. Der Zugriff auf diese Daten ist passwortgeschützt
+          und ausschließlich uns möglich.
+        </p>
+        <p>
+          Rechtsgrundlage ist Art. 6 Abs. 1 lit. b DSGVO (vorvertragliche
+          Maßnahmen). Gespeichert werden die im Formular angegebenen Daten
+          sowie ein etwaig vereinbarter Termin samt Treffpunkt.
+        </p>
+        <p>
+          [Serverstandort des gewählten Supabase-Projekts eintragen. Bei einem
+          Standort außerhalb der EU ist zusätzlich auf die
+          Standardvertragsklauseln hinzuweisen. Auftragsverarbeitungsvertrag
+          mit Supabase abschließen — supabase.com/legal/dpa]
+        </p>
+
+        <h2>6. E-Mail-Versand</h2>
+        <p>
+          Für den Versand unserer Antworten und Terminbestätigungen setzen wir
+          den Dienst <strong>Resend</strong> ein. Dabei werden Ihre
+          E-Mail-Adresse und der Inhalt der Nachricht an den Anbieter
+          übermittelt. Rechtsgrundlage ist Art. 6 Abs. 1 lit. b DSGVO.
+        </p>
+        <p>
+          [Auftragsverarbeitungsvertrag mit Resend abschließen und auf die
+          Standardvertragsklauseln für die Datenübermittlung in die USA
+          hinweisen — resend.com/legal/dpa]
+        </p>
+
+        <h2>7. Schriftarten</h2>
         <p>
           Diese Website bindet die verwendeten Schriftarten lokal vom eigenen
           Server ein. Beim Seitenaufruf wird dadurch keine Verbindung zu
@@ -98,7 +131,7 @@ export default function DatenschutzPage() {
           übertragen.
         </p>
 
-        <h2>6. Cookies und Analyse</h2>
+        <h2>8. Cookies und Analyse</h2>
         <p>
           Diese Website setzt derzeit keine Cookies zu Analyse- oder
           Marketingzwecken ein. [Sollte später ein Analyse-Werkzeug oder ein
@@ -106,7 +139,7 @@ export default function DatenschutzPage() {
           ergänzen — inklusive Einwilligungslösung.]
         </p>
 
-        <h2>7. Ihre Rechte</h2>
+        <h2>9. Ihre Rechte</h2>
         <p>
           Sie haben jederzeit das Recht auf unentgeltliche Auskunft über Ihre
           gespeicherten personenbezogenen Daten, deren Herkunft und Empfänger
@@ -117,11 +150,12 @@ export default function DatenschutzPage() {
           zu.
         </p>
         <p>
-          Ihnen steht zudem ein Beschwerderecht bei einer
-          Datenschutz-Aufsichtsbehörde zu.
+          Ihnen steht zudem ein Beschwerderecht bei der Aufsichtsbehörde zu.
+          Zuständig ist die Österreichische Datenschutzbehörde,
+          Barichgasse 40–42, 1030 Wien (dsb.gv.at).
         </p>
 
-        <h2>8. SSL-/TLS-Verschlüsselung</h2>
+        <h2>10. SSL-/TLS-Verschlüsselung</h2>
         <p>
           Diese Seite nutzt aus Sicherheitsgründen eine SSL-/TLS-Verschlüsselung.
           Eine verschlüsselte Verbindung erkennen Sie daran, dass die

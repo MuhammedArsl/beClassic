@@ -8,14 +8,24 @@ interface VehicleShowcaseProps {
   vehicle: Vehicle
   /**
    * Blendet die Sektionsnummer aus. Auf der Landingpage sind die Sektionen
-   * durchnummeriert (01–05); auf einer Fahrzeug-Detailseite ergäbe eine
+   * durchnummeriert (01–03); auf einer Fahrzeug-Detailseite ergäbe eine
    * einzelne „01“ keinen Sinn.
    */
   showIndex?: boolean
+  /**
+   * Umfang der Sektion.
+   *
+   *   `voll`    — Geschichte, technische Daten und Galerie. Für die
+   *               Fahrzeug-Detailseite, auf der genau das erwartet wird.
+   *   `kompakt` — Bild, Eckdaten und ein Absatz. Für die Landingpage: dort
+   *               soll das Fahrzeug Lust machen, nicht erschöpfend
+   *               beschrieben werden. Wer mehr wissen will, fragt an.
+   */
+  variant?: 'voll' | 'kompakt'
 }
 
 /**
- * Die Fahrzeugsektion der Landingpage.
+ * Die Fahrzeugsektion.
  *
  * Bewusst keine Fahrzeugbörsen-Optik: zuerst die Emotion (Bild, Geschichte),
  * die technischen Daten stehen ruhig daneben statt im Vordergrund.
@@ -24,7 +34,14 @@ interface VehicleShowcaseProps {
 export default function VehicleShowcase({
   vehicle,
   showIndex = true,
+  variant = 'voll',
 }: VehicleShowcaseProps) {
+  const compact = variant === 'kompakt'
+
+  // In der kompakten Fassung trägt der erste Absatz die Sektion allein —
+  // er ist der stärkste und kommt ohne die folgenden aus.
+  const story = compact ? vehicle.story.slice(0, 1) : vehicle.story
+
   return (
     <section id="fahrzeug" className="relative bg-cream py-28 sm:py-36">
       <div className="mx-auto max-w-[1400px] px-6 sm:px-10">
@@ -89,15 +106,15 @@ export default function VehicleShowcase({
         </Reveal>
       </div>
 
-      {/* Geschichte links, technische Daten rechts */}
-      <div className="mx-auto mt-24 max-w-[1400px] px-6 sm:mt-32 sm:px-10">
+      {/* Geschichte — in der vollen Fassung mit den technischen Daten daneben */}
+      <div className="mx-auto mt-20 max-w-[1400px] px-6 sm:mt-24 sm:px-10">
         <div className="grid gap-16 lg:grid-cols-12 lg:gap-20">
-          <div className="lg:col-span-7">
+          <div className={compact ? 'lg:col-span-8' : 'lg:col-span-7'}>
             <Reveal>
               <p className="eyebrow">Die Geschichte</p>
             </Reveal>
             <div className="mt-8 space-y-7">
-              {vehicle.story.map((paragraph, index) => (
+              {story.map((paragraph, index) => (
                 <Reveal key={index} delay={index * 90}>
                   <p
                     className={`font-normal leading-[1.85] text-mist ${
@@ -113,71 +130,78 @@ export default function VehicleShowcase({
             </div>
           </div>
 
-          <div className="lg:col-span-5">
-            <Reveal delay={100}>
-              <div className="border-t border-ink pt-8">
-                <p className="eyebrow">Technische Daten</p>
-                <dl className="mt-8">
-                  {vehicle.specifications.map((spec) => (
-                    <div
-                      key={spec.label}
-                      className="flex items-baseline justify-between gap-6 border-b border-line py-4"
-                    >
-                      <dt className="text-[1.0625rem] font-normal text-mist">
-                        {spec.label}
-                      </dt>
-                      <dd className="text-right text-[1.0625rem] font-normal text-ink">
-                        {spec.value}
-                      </dd>
-                    </div>
-                  ))}
-                </dl>
-              </div>
-            </Reveal>
-          </div>
+          {/* Technische Daten: zehn Zeilen sind auf der Landingpage zu viel —
+              die vier Eckdaten über dem Text sagen dort das Wesentliche. */}
+          {!compact && (
+            <div className="lg:col-span-5">
+              <Reveal delay={100}>
+                <div className="border-t border-ink pt-8">
+                  <p className="eyebrow">Technische Daten</p>
+                  <dl className="mt-8">
+                    {vehicle.specifications.map((spec) => (
+                      <div
+                        key={spec.label}
+                        className="flex items-baseline justify-between gap-6 border-b border-line py-4"
+                      >
+                        <dt className="text-[1.0625rem] font-normal text-mist">
+                          {spec.label}
+                        </dt>
+                        <dd className="text-right text-[1.0625rem] font-normal text-ink">
+                          {spec.value}
+                        </dd>
+                      </div>
+                    ))}
+                  </dl>
+                </div>
+              </Reveal>
+            </div>
+          )}
         </div>
       </div>
 
-      {/* Bildergalerie */}
-      <div className="mx-auto mt-24 max-w-[1400px] px-6 sm:mt-32 sm:px-10">
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-3 md:gap-6">
-          {vehicle.images.map((image, index) => (
-            <figure
-              key={image.src}
-              className={image.span === 'wide' ? 'md:col-span-3' : ''}
-            >
-              <Reveal variant="image" delay={(index % 3) * 100}>
-                <div
-                  className={`media-zoom relative w-full overflow-hidden bg-sand ${
-                    image.span === 'wide'
-                      ? 'aspect-[16/9] lg:aspect-[21/9]'
-                      : 'aspect-[4/5]'
-                  }`}
-                >
-                  <Image
-                    src={image.src}
-                    alt={image.alt}
-                    fill
-                    sizes={
+      {/* Bildergalerie — auf der Landingpage übernimmt die Erlebnis-Sektion
+          den Bildteil, eine zweite Galerie davor wäre eine Wiederholung. */}
+      {!compact && (
+        <div className="mx-auto mt-24 max-w-[1400px] px-6 sm:mt-32 sm:px-10">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-3 md:gap-6">
+            {vehicle.images.map((image, index) => (
+              <figure
+                key={image.src}
+                className={image.span === 'wide' ? 'md:col-span-3' : ''}
+              >
+                <Reveal variant="image" delay={(index % 3) * 100}>
+                  <div
+                    className={`media-zoom relative w-full overflow-hidden bg-sand ${
                       image.span === 'wide'
-                        ? '(max-width: 1400px) 100vw, 1400px'
-                        : '(max-width: 768px) 100vw, 33vw'
-                    }
-                    className="object-cover"
-                  />
-                </div>
-              </Reveal>
-              {image.caption && (
-                <Reveal delay={(index % 3) * 100 + 80}>
-                  <figcaption className="mt-4 text-[0.8125rem] uppercase tracking-[0.2em] text-mist">
-                    {image.caption}
-                  </figcaption>
+                        ? 'aspect-[16/9] lg:aspect-[21/9]'
+                        : 'aspect-[4/5]'
+                    }`}
+                  >
+                    <Image
+                      src={image.src}
+                      alt={image.alt}
+                      fill
+                      sizes={
+                        image.span === 'wide'
+                          ? '(max-width: 1400px) 100vw, 1400px'
+                          : '(max-width: 768px) 100vw, 33vw'
+                      }
+                      className="object-cover"
+                    />
+                  </div>
                 </Reveal>
-              )}
-            </figure>
-          ))}
+                {image.caption && (
+                  <Reveal delay={(index % 3) * 100 + 80}>
+                    <figcaption className="mt-4 text-[0.8125rem] uppercase tracking-[0.2em] text-mist">
+                      {image.caption}
+                    </figcaption>
+                  </Reveal>
+                )}
+              </figure>
+            ))}
+          </div>
         </div>
-      </div>
+      )}
     </section>
   )
 }

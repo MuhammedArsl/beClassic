@@ -13,20 +13,23 @@ export const site = {
   description:
     'Klassische Fahrzeuge für Hochzeiten, Filmproduktionen, Events und besondere Fahrten. Persönlich vermittelt, sorgfältig gepflegt, unverbindlich anfragbar.',
   /** TODO: Produktions-Domain eintragen (wichtig für SEO und Social-Vorschau). */
-  url: 'https://beclassic.de',
+  url: 'https://beclassic.at',
 
   contact: {
-    // TODO: echte Kontaktdaten eintragen
-    email: 'anfrage@beclassic.de',
-    phone: '+49 000 0000000',
-    phoneHref: '+490000000000',
-    city: 'Deutschland',
+    // TODO: echte Kontaktdaten eintragen.
+    // Die Vorwahl +43 steht für Österreich; `phoneHref` ist dieselbe Nummer
+    // ohne Leerzeichen — sie landet im tel:-Link.
+    email: 'anfrage@beclassic.at',
+    phone: '+43 000 0000000',
+    phoneHref: '+430000000000',
+    /** Erscheint als Einzugsgebiet in den strukturierten Daten. */
+    city: 'Wien, Österreich',
     /** Optional: vollständige Adresse für Impressum und Footer. */
     address: {
       street: 'Musterstraße 1',
-      zip: '00000',
-      city: 'Musterstadt',
-      country: 'Deutschland',
+      zip: '1010',
+      city: 'Wien',
+      country: 'Österreich',
     },
   },
 
@@ -49,27 +52,29 @@ export const site = {
   ],
 } as const
 
-/** Die vier Schritte des Ablaufs — bewusst schlicht gehalten. */
+/**
+ * Die vier Schritte des Ablaufs.
+ *
+ * Die Beschreibungen sind bewusst auf einen Halbsatz gekürzt: Sie stehen
+ * neben dem Anfrageformular (siehe components/Process.tsx) und sollen die
+ * Aufmerksamkeit dort nicht vom Formular abziehen.
+ */
 export const processSteps = [
   {
     title: 'Anfrage senden',
-    description:
-      'Ein kurzes Formular genügt. Erzählen Sie uns von Ihrem Anlass, dem Datum und Ihren Wünschen.',
+    description: 'unverbindlich, in zwei Minuten',
   },
   {
     title: 'Termin bestätigen',
-    description:
-      'Wir melden uns persönlich, klären Verfügbarkeit und Details und senden Ihnen ein individuelles Angebot.',
+    description: 'wir melden uns persönlich, meist am selben Tag',
   },
   {
     title: 'Fahrzeug übernehmen',
-    description:
-      'Übergabe am vereinbarten Ort — gepflegt, vollgetankt und mit einer ruhigen Einweisung.',
+    description: 'am vereinbarten Ort, gepflegt und vollgetankt',
   },
   {
     title: 'Fahrt genießen',
-    description:
-      'Der Rest gehört Ihnen. Wir bleiben im Hintergrund erreichbar, falls Sie etwas brauchen.',
+    description: 'der Rest gehört Ihnen',
   },
 ] as const
 

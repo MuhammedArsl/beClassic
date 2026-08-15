@@ -34,14 +34,14 @@ export interface VehicleImage {
 export interface VehicleSpecification {
   /** Kurzes Label, z. B. „Motor“ */
   label: string
-  /** Wert, z. B. „1.6 Liter Reihenvierzylinder“ */
+  /** Wert, z. B. „1,5 Liter Reihenvierzylinder“ */
   value: string
 }
 
 export interface Vehicle {
   /** URL-Segment, z. B. `mg-mga-roadster` → /fahrzeuge/mg-mga-roadster */
   slug: string
-  /** Vollstaendiger Fahrzeugname, z. B. „MG MGA 1600 Roadster“ */
+  /** Vollstaendiger Fahrzeugname, z. B. „MG MGA 1500 Roadster“ */
   name: string
   /** Marke, getrennt gefuehrt fuer spaetere Filterung. */
   make: string
