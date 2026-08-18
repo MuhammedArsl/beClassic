@@ -26,7 +26,6 @@ interface InquiryPayload {
   startDate: string
   endDate?: string
   occasion: string
-  pickupLocation?: string
   message?: string
   privacy: boolean
   vehicle?: string
@@ -191,7 +190,6 @@ export async function POST(request: Request) {
     startDate: clean(raw.startDate, 20),
     endDate: clean(raw.endDate, 20),
     occasion: clean(raw.occasion, 60),
-    pickupLocation: clean(raw.pickupLocation, 200),
     message: clean(raw.message, 2000),
     privacy: raw.privacy === true,
     vehicle: clean(raw.vehicle, 120),
@@ -263,7 +261,6 @@ export async function POST(request: Request) {
         `Wunschdatum: ${formatDate(data.startDate)}`,
         ...(data.endDate ? [`Rückgabe:    ${formatDate(data.endDate)}`] : []),
         ...(data.vehicle ? [`Fahrzeug:    ${data.vehicle}`] : []),
-        ...(data.pickupLocation ? [`Abholort:    ${data.pickupLocation}`] : []),
         ...(data.message ? ['', 'Nachricht:', data.message] : []),
         '',
         `Im Dashboard öffnen: ${site.url}/admin/anfrage/${inquiry.id}`,

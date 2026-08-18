@@ -43,37 +43,85 @@ export default function Home() {
 
       <Footer />
 
-      {/* Strukturierte Daten — hilft Google, das Angebot korrekt einzuordnen. */}
+      {/*
+        Strukturierte Daten — so liest Google, was hier angeboten wird.
+
+        Ausgeliefert wird ein @graph mit drei verbundenen Knoten statt eines
+        einzelnen: das Unternehmen (AutoRental, eine Unterart von
+        LocalBusiness), die Website und das Fahrzeug. Über die `@id` weiß
+        Google, dass alle drei dasselbe Haus betreffen — bei drei losen
+        Objekten muss es das raten.
+
+        Der Ortsbezug steht bewusst mehrfach drin (areaServed, address,
+        geo): Danach entscheidet sich, ob die Seite bei „Oldtimer mieten
+        Wien" überhaupt in die lokale Auswahl kommt.
+      */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
           __html: JSON.stringify({
             '@context': 'https://schema.org',
-            '@type': 'AutoRental',
-            name: site.name,
-            description: site.description,
-            url: site.url,
-            email: site.contact.email,
-            telephone: site.contact.phone,
-            areaServed: { '@type': 'Country', name: 'Österreich' },
-            address: {
-              '@type': 'PostalAddress',
-              streetAddress: site.contact.address.street,
-              postalCode: site.contact.address.zip,
-              addressLocality: site.contact.address.city,
-              addressCountry: 'AT',
-            },
-            makesOffer: {
-              '@type': 'Offer',
-              itemOffered: {
+            '@graph': [
+              {
+                '@type': 'AutoRental',
+                '@id': `${site.url}/#unternehmen`,
+                name: site.name,
+                description: site.description,
+                url: site.url,
+                email: site.contact.email,
+                telephone: site.contact.phone,
+                image: `${site.url}${vehicle.heroImage.src}`,
+                // Ohne Straße — die echte Geschäftsanschrift steht noch aus,
+                // und eine erfundene wäre schlimmer als keine.
+                address: {
+                  '@type': 'PostalAddress',
+                  addressLocality: site.contact.address.city,
+                  addressRegion: 'Wien',
+                  addressCountry: 'AT',
+                },
+                // Wien als Mittelpunkt (Stephansdom). Der Punkt ordnet das
+                // Angebot geografisch ein, ohne eine Anschrift zu behaupten.
+                geo: {
+                  '@type': 'GeoCoordinates',
+                  latitude: 48.2082,
+                  longitude: 16.3738,
+                },
+                // Zuerst die Stadt, dann das Land: Wien ist der Markt, das
+                // übrige Österreich wird beliefert.
+                areaServed: [
+                  { '@type': 'City', name: 'Wien' },
+                  { '@type': 'Country', name: 'Österreich' },
+                ],
+                currenciesAccepted: 'EUR',
+                ...(site.social.instagram ? { sameAs: [site.social.instagram] } : {}),
+                makesOffer: {
+                  '@type': 'Offer',
+                  availableAtOrFrom: { '@type': 'City', name: 'Wien' },
+                  priceCurrency: 'EUR',
+                  itemOffered: { '@id': `${site.url}/#fahrzeug` },
+                },
+              },
+              {
+                '@type': 'WebSite',
+                '@id': `${site.url}/#website`,
+                url: site.url,
+                name: site.name,
+                inLanguage: 'de-AT',
+                publisher: { '@id': `${site.url}/#unternehmen` },
+              },
+              {
                 '@type': 'Car',
+                '@id': `${site.url}/#fahrzeug`,
                 name: vehicle.name,
                 brand: { '@type': 'Brand', name: vehicle.make },
+                model: vehicle.model,
                 modelDate: String(vehicle.year),
                 vehicleSeatingCapacity: 2,
                 vehicleTransmission: 'Manuell',
+                bodyType: 'Roadster',
+                image: `${site.url}${vehicle.heroImage.src}`,
               },
-            },
+            ],
           }),
         }}
       />

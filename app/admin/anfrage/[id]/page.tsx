@@ -169,9 +169,6 @@ function Facts({ inquiry }: { inquiry: Inquiry }) {
     ...(inquiry.vehicle
       ? ([['Fahrzeug', inquiry.vehicle]] as Array<[string, string]>)
       : []),
-    ...(inquiry.pickup_location
-      ? ([['Abholort', inquiry.pickup_location]] as Array<[string, string]>)
-      : []),
   ]
 
   return (

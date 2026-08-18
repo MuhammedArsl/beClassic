@@ -47,7 +47,6 @@ export default function AppointmentForm({
     appointment_start: string | null
     appointment_end: string | null
     appointment_location: string | null
-    pickup_location: string | null
     status: string
   }
   mailConfigured: boolean
@@ -116,9 +115,7 @@ export default function AppointmentForm({
           id="appointmentLocation"
           name="appointmentLocation"
           type="text"
-          defaultValue={
-            inquiry.appointment_location ?? inquiry.pickup_location ?? ''
-          }
+          defaultValue={inquiry.appointment_location ?? ''}
           placeholder="z. B. Standesamt, Hotel oder Adresse"
           className={fieldClass}
         />

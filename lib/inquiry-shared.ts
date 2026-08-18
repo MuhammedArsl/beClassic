@@ -38,7 +38,6 @@ export interface Inquiry {
   start_date: string
   end_date: string | null
   occasion: string
-  pickup_location: string | null
   message: string | null
   vehicle: string | null
   vehicle_slug: string | null
@@ -68,7 +67,6 @@ export interface NewInquiry {
   startDate: string
   endDate?: string
   occasion: string
-  pickupLocation?: string
   message?: string
   vehicle?: string
   vehicleSlug?: string

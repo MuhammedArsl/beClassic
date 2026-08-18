@@ -111,8 +111,7 @@ export function buildIcs(inquiry: Inquiry): string | null {
 
   const end = resolveEnd(inquiry, start)
 
-  const location =
-    inquiry.appointment_location?.trim() || inquiry.pickup_location?.trim() || ''
+  const location = inquiry.appointment_location?.trim() || ''
 
   const lines = [
     'BEGIN:VCALENDAR',

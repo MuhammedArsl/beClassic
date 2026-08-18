@@ -12,9 +12,14 @@ export const site = {
   owner: 'Yusuf Özcan',
   /** Wird im Logo als feine Unterzeile gesetzt. */
   tagline: 'Klassische Automobile',
+  /**
+   * Wird als Meta-Beschreibung ausgeliefert und erscheint so im Suchergebnis.
+   * Der Ortsbezug steht bewusst im ersten Satz: Danach wird gesucht
+   * („Oldtimer mieten Wien“), und Google schneidet hinten ab.
+   * Richtwert 150–160 Zeichen.
+   */
   description:
-    'Klassische Fahrzeuge für Hochzeiten, Filmproduktionen, Events und besondere Fahrten. Persönlich vermittelt, sorgfältig gepflegt, unverbindlich anfragbar.',
-  /** TODO: Produktions-Domain eintragen (wichtig für SEO und Social-Vorschau). */
+    'Oldtimer mieten in Wien: klassische Fahrzeuge für Hochzeit, Fotoshooting, Filmproduktion und Events in ganz Österreich. Persönlich vermittelt, unverbindlich anfragbar.',
   url: 'https://beclassic.at',
 
   contact: {
@@ -25,10 +30,16 @@ export const site = {
     phoneHref: '+436764427719',
     /** Erscheint als Einzugsgebiet in den strukturierten Daten. */
     city: 'Wien, Österreich',
-    /** Optional: vollständige Adresse für Impressum und Footer. */
+    /**
+     * Es wird bewusst nur der Ort geführt, keine Straße.
+     * Vorher stand hier die erfundene Anschrift „Musterstraße 1, 1010 Wien“ —
+     * die lief in die Datenschutzerklärung und in die strukturierten Daten
+     * der Startseite und damit als Geschäftsanschrift zu Google. Eine falsche
+     * Adresse schadet dort mehr als eine fehlende. Sobald die echte
+     * Geschäftsanschrift feststeht, kommt sie hier als `street` und `zip`
+     * dazu — Impressum, Datenschutz und schema.org ziehen sie dann von selbst.
+     */
     address: {
-      street: 'Musterstraße 1',
-      zip: '1010',
       city: 'Wien',
       country: 'Österreich',
     },

@@ -107,7 +107,6 @@ export async function createInquiry(input: NewInquiry): Promise<Inquiry | null> 
       start_date: input.startDate,
       end_date: input.endDate || null,
       occasion: input.occasion,
-      pickup_location: input.pickupLocation || null,
       message: input.message || null,
       vehicle: input.vehicle || null,
       vehicle_slug: input.vehicleSlug || null,

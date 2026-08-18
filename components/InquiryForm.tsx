@@ -30,7 +30,6 @@ interface FormData {
   startDate: string
   endDate: string
   occasion: string
-  pickupLocation: string
   message: string
   privacy: boolean
   /**
@@ -52,7 +51,6 @@ const emptyForm: FormData = {
   startDate: '',
   endDate: '',
   occasion: '',
-  pickupLocation: '',
   message: '',
   privacy: false,
   website: '',
@@ -403,16 +401,6 @@ export default function InquiryForm({
                     </div>
                     {errors.occasion && <FieldError message={errors.occasion} />}
                   </div>
-
-                  {/* Abholort */}
-                  <Field
-                    label="Abholort"
-                    name="pickupLocation"
-                    value={data.pickupLocation}
-                    onChange={update}
-                    error={errors.pickupLocation}
-                    placeholder="z. B. Standesamt, Hotel oder Adresse"
-                  />
 
                   {/* Nachricht */}
                   <div>

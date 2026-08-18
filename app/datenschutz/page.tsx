@@ -28,9 +28,7 @@ export default function DatenschutzPage() {
         <p>
           {site.name}
           <br />
-          {site.contact.address.street}
-          <br />
-          {site.contact.address.zip} {site.contact.address.city}
+          {site.contact.address.city}
           <br />
           E-Mail: {site.contact.email}
         </p>
@@ -50,7 +48,7 @@ export default function DatenschutzPage() {
         <p>
           Wenn Sie uns über das Anfrageformular kontaktieren, verarbeiten wir
           die von Ihnen angegebenen Daten — Vor- und Nachname, E-Mail-Adresse,
-          Telefonnummer, gewünschter Zeitraum, Anlass, Abholort sowie Ihre
+          Telefonnummer, gewünschter Zeitraum, Anlass sowie Ihre
           Nachricht — ausschließlich zur Bearbeitung Ihrer Anfrage und für den
           Fall von Anschlussfragen.
         </p>
