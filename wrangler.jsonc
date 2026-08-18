@@ -1,0 +1,53 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "main": ".open-next/worker.js",
+  "name": "beclassic",
+  "compatibility_date": "2026-08-17",
+  // nodejs_compat: lib/mail.ts und lib/ics.ts benutzen Buffer.
+  // global_fetch_strictly_public: fetch() geht nach draußen statt intern am
+  // Worker vorbei — nötig, damit Aufrufe an Supabase, Resend und Turnstile
+  // wirklich das Netz erreichen.
+  "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+  "assets": {
+    "directory": ".open-next/assets",
+    "binding": "ASSETS"
+  },
+  // Bildoptimierung von next/image über Cloudflare.
+  "images": {
+    "binding": "IMAGES"
+  },
+  // Die Domain wird beim Deployen angelegt — im Dashboard ist nichts zu
+  // klicken. Cloudflare setzt den DNS-Eintrag dabei selbst und ersetzt die
+  // alten A-Records, die noch auf den GoDaddy-Baukasten zeigten.
+  //
+  // ACHTUNG: Mit diesem Eintrag schaltet der erste erfolgreiche Deploy die
+  // Domain unmittelbar auf den Worker um. Zum Testen ohne Umschalten die
+  // Zeile auskommentieren — der Worker ist dann nur unter seiner
+  // workers.dev-Adresse erreichbar.
+  //
+  // Nur der Apex: www.beclassic.at wird bereits von einer Cloudflare-Regel
+  // per 301 hierher geleitet (geprüft: antwortet in 0,3 s, ohne den
+  // Ursprungsserver zu berühren). Sollte diese Regel wider Erwarten fehlen,
+  // kommt www als zweiter Eintrag mit denselben zwei Feldern dazu.
+  // Cloudflare legt den DNS-Eintrag beim Deployen selbst an. Voraussetzung
+  // war, dass am Hostnamen keine fremdverwalteten Einträge mehr stehen —
+  // die beiden A-Records auf den GoDaddy-Baukasten sind am 17.08.2026
+  // gelöscht worden (vorher: Fehler 100117).
+  //
+  // Beide Namen gehören an den Worker. www wurde vorher nebenbei von
+  // GoDaddy per 301 auf den Apex geleitet — mit dessen Wegfall lief es in
+  // einen Fehler 522. Die Umleitung macht jetzt die App selbst
+  // (next.config.ts), deshalb muss der Worker auch für www zuständig sein.
+  "routes": [
+    { "pattern": "beclassic.at", "custom_domain": true },
+    { "pattern": "www.beclassic.at", "custom_domain": true }
+  ],
+
+  // Bleibt an: eine zweite, stabile Adresse zum Prüfen nach jedem Deploy,
+  // unabhängig davon, was die Domain gerade macht.
+  "workers_dev": true,
+
+  // Geheimnisse stehen bewusst NICHT hier — diese Datei liegt im Repository.
+  // Sie werden mit `wrangler secret bulk` gesetzt, siehe README.
+  "vars": {}
+}

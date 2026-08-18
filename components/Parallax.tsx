@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef, type ReactNode } from 'react'
+import { useEffect, useRef, useState, type ReactNode } from 'react'
 
 interface ParallaxProps {
   children: ReactNode
@@ -28,10 +28,23 @@ export default function Parallax({
   const container = useRef<HTMLDivElement>(null)
   const inner = useRef<HTMLDivElement>(null)
 
+  /**
+   * Läuft der Effekt tatsächlich? Nur dann bekommt die innere Fläche ihre
+   * Überhöhe.
+   *
+   * Vorher stand die Überhöhe fest im Markup. Auf Mobilgeräten steigt diese
+   * Komponente aber gleich wieder aus — dort wurden also 18 % der Bildhöhe
+   * weggeschnitten, ohne dass sich je etwas bewegt hätte. Genau die Höhe,
+   * die auf dem schmalen Hochformat-Rahmen ohnehin am meisten fehlt.
+   */
+  const [active, setActive] = useState(false)
+
   useEffect(() => {
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)')
     const smallScreen = window.matchMedia('(max-width: 768px)')
     if (reducedMotion.matches || smallScreen.matches) return
+
+    setActive(true)
 
     const wrapper = container.current
     const target = inner.current
@@ -75,13 +88,19 @@ export default function Parallax({
       window.removeEventListener('scroll', onScroll)
       window.removeEventListener('resize', onScroll)
       if (frame) cancelAnimationFrame(frame)
+      setActive(false)
     }
   }, [speed])
 
   return (
     <div ref={container} className={`overflow-hidden ${className}`.trim()}>
-      {/* Etwas höher als der Rahmen, damit beim Versatz keine Kante frei wird. */}
-      <div ref={inner} className="h-[118%] w-full will-change-transform">
+      {/* Nur beim laufenden Effekt etwas höher als der Rahmen, damit beim
+          Versatz keine Kante frei wird. Steht der Effekt still, füllt das
+          Bild den Rahmen genau — ohne unnötigen Beschnitt. */}
+      <div
+        ref={inner}
+        className={active ? 'h-[118%] w-full will-change-transform' : 'h-full w-full'}
+      >
         {children}
       </div>
     </div>

@@ -41,9 +41,16 @@
 
 html {
   scroll-behavior: smooth;
-  /* Sticky Header überdeckt Anker-Ziele nicht */
-  scroll-padding-top: 5.5rem;
+  /* Sticky Header überdeckt Anker-Ziele nicht. Die Leiste ist auf dem Handy
+     niedriger als auf dem Desktop — der Abstand folgt ihr. */
+  scroll-padding-top: 4.75rem;
   -webkit-text-size-adjust: 100%;
+}
+
+@media (min-width: 640px) {
+  html {
+    scroll-padding-top: 5.5rem;
+  }
 }
 
 body {
@@ -58,6 +65,8 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
+  /* Das graue Standard-Blinken beim Antippen passt nicht zur Palette. */
+  -webkit-tap-highlight-color: rgba(168, 138, 92, 0.16);
 }
 
 ::selection {
@@ -174,6 +183,36 @@ body {
   transform-origin: left;
 }
 
+/* ── Trefferflächen auf Touchgeräten ───────────────────────────
+   Ein Textlink ist nur so hoch wie seine Zeile — rund 24 px. Mit dem
+   Daumen trifft man das nicht zuverlässig; empfohlen sind 44 px.
+   `.tap-area` legt eine unsichtbare Fläche dieser Höhe über den Link,
+   ohne das Layout zu verändern: der Link bleibt optisch, wo er ist.
+
+   Nur auf Touchgeräten, damit der Mauszeiger keine unsichtbaren Zonen
+   bekommt. Setzt `position: relative` voraus — `.link-underline` bringt
+   das mit, sonst zusätzlich `relative` setzen.
+
+   WICHTIG: Der Zeilenabstand solcher Listen muss mindestens 44 px
+   Rastermaß ergeben (z. B. `space-y-5` bei 24 px Zeilenhöhe), sonst
+   überlappen sich die Flächen benachbarter Links und man trifft den
+   falschen.
+   ──────────────────────────────────────────────────────────── */
+.tap-area::before {
+  content: '';
+  position: absolute;
+  inset-inline: 0;
+  top: 50%;
+  height: 100%;
+  transform: translateY(-50%);
+}
+
+@media (pointer: coarse) {
+  .tap-area::before {
+    height: 44px;
+  }
+}
+
 /* Bild in einem Rahmen, das beim Hover minimal näher kommt */
 .media-zoom img {
   transition: transform 1.2s var(--ease-premium);
@@ -234,6 +273,15 @@ body {
 
 .hero-drift {
   animation: hero-drift 24s var(--ease-soft) forwards;
+}
+
+/* Auf dem Handy steht das Hero-Bild als Band in seinem eigenen Format
+   (siehe components/Hero.tsx). Eine Zoomfahrt würde genau das wieder
+   wegnehmen, worum es dort geht — bis zu 14 % des Bildes. Also aus. */
+@media (max-width: 639px) {
+  .hero-drift {
+    animation: none;
+  }
 }
 
 /* ── Barrierefreiheit ──────────────────────────────────────────

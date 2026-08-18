@@ -10,10 +10,24 @@ export const metadata: Metadata = {
 }
 
 /**
- * >>> WICHTIG: Dies ist eine Struktur-Vorlage, kein fertiger Rechtstext.
- * Bitte durch die eigenen Angaben ersetzen und vor dem Livegang prüfen
- * lassen — die WKO bietet Mitgliedern dafür einen kostenlosen
- * Impressum-Generator und eine Rechtsberatung an.
+ * >>> UNVOLLSTÄNDIG — die Seite weist selbst darauf hin.
+ *
+ * Enthalten sind bisher nur Inhaber und Kontaktdaten. Es fehlen die
+ * Pflichtangaben unten; sie sind nachzutragen, sobald sie vorliegen. Die
+ * frühere Fassung stand voller Platzhalter samt erfundener Anschrift
+ * („Musterstraße 1") — die ist deshalb entfernt.
+ *
+ * NOCH NACHZUTRAGEN
+ *   - Geschäftsanschrift (die echte, siehe data/site.ts → contact.address)
+ *   - Gewerbewortlaut laut Gewerbeschein
+ *   - UID-Nummer oder Hinweis auf die Kleinunternehmerbefreiung
+ *     (§ 6 Abs. 1 Z 27 UStG)
+ *   - Firmenbuchnummer und -gericht, falls eingetragen
+ *   - zuständige Bezirksverwaltungsbehörde (in Wien: Magistratisches
+ *     Bezirksamt) und Kammerzugehörigkeit
+ *   - Bildnachweise
+ *   Die WKO bietet Mitgliedern dafür einen kostenlosen Impressum-Generator
+ *   und eine Rechtsberatung an.
  *
  * RECHTSRAHMEN ÖSTERREICH
  *   Die Offenlegungspflichten ergeben sich aus mehreren Gesetzen zugleich:
@@ -32,71 +46,26 @@ export default function ImpressumPage() {
       <LegalPage
         eyebrow="Rechtliches"
         title="Impressum"
-        note="Vorlage — bitte durch die eigenen Angaben ersetzen und rechtlich prüfen lassen."
+        note="Diese Seite wird derzeit überarbeitet."
       >
-        <h2>Angaben gemäß § 5 ECG und § 25 MedienG</h2>
+        <h2>Wird gerade bearbeitet</h2>
         <p>
-          {site.name}
-          <br />
-          {site.contact.address.street}
-          <br />
-          {site.contact.address.zip} {site.contact.address.city}
-          <br />
-          {site.contact.address.country}
+          Die vollständigen Angaben gemäß § 5 ECG und § 25 MedienG werden
+          derzeit zusammengestellt und in Kürze hier veröffentlicht.
         </p>
 
-        <h2>Inhaber / vertretungsbefugte Person</h2>
-        <p>[Vor- und Nachname]</p>
-
-        <h2>Unternehmensgegenstand</h2>
-        <p>
-          Vermietung von klassischen Kraftfahrzeugen ohne Beistellung eines
-          Lenkers.
-          <br />
-          [Gewerbewortlaut laut Gewerbeschein eintragen]
-        </p>
+        <h2>Inhaber</h2>
+        <p>{site.owner}</p>
 
         <h2>Kontakt</h2>
         <p>
-          Telefon: {site.contact.phone}
+          {site.name}
           <br />
-          E-Mail: {site.contact.email}
-        </p>
-
-        <h2>Firmenbuch</h2>
-        <p>
-          [Firmenbuchnummer und Firmenbuchgericht eintragen — entfällt bei
-          nicht eingetragenen Einzelunternehmen]
-        </p>
-
-        <h2>Umsatzsteuer-Identifikationsnummer</h2>
-        <p>
-          [UID-Nummer im Format ATU00000000 eintragen — oder Hinweis auf die
-          Kleinunternehmerbefreiung gemäß § 6 Abs. 1 Z 27 UStG]
-        </p>
-
-        <h2>Gewerbebehörde</h2>
-        <p>
-          [Zuständige Bezirksverwaltungsbehörde eintragen — in Wien das
-          Magistratische Bezirksamt des jeweiligen Bezirks]
-        </p>
-
-        <h2>Kammerzugehörigkeit</h2>
-        <p>
-          Mitglied der Wirtschaftskammer Österreich,
+          {site.contact.address.city}
           <br />
-          [zuständige Landeskammer und Fachgruppe eintragen]
+          Telefon: <a href={`tel:${site.contact.phoneHref}`}>{site.contact.phone}</a>
           <br />
-          Anwendbare Rechtsvorschrift: Gewerbeordnung 1994 (GewO), abrufbar
-          unter ris.bka.gv.at
-        </p>
-
-        <h2>Online-Streitbeilegung</h2>
-        <p>
-          Bei Streitigkeiten aus einem Online-Vertrag können sich Verbraucher
-          an die Internet Ombudsstelle wenden (ombudsstelle.at). Wir sind
-          weder bereit noch verpflichtet, an Streitbeilegungsverfahren vor
-          einer Verbraucherschlichtungsstelle teilzunehmen.
+          E-Mail: <a href={`mailto:${site.contact.email}`}>{site.contact.email}</a>
         </p>
 
         <h2>Haftung für Inhalte</h2>
@@ -107,13 +76,6 @@ export default function ImpressumPage() {
           nicht verpflichtet, übermittelte oder gespeicherte fremde
           Informationen zu überwachen oder nach Umständen zu forschen, die
           auf eine rechtswidrige Tätigkeit hinweisen.
-        </p>
-
-        <h2>Bildnachweise</h2>
-        <p>
-          Sämtliche Fahrzeugaufnahmen: [Name des Fotografen eintragen].
-          <br />
-          Die abgebildete Person hat der Veröffentlichung zugestimmt.
         </p>
       </LegalPage>
       <Footer />

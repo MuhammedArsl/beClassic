@@ -202,6 +202,73 @@ Mobilgeräten bewusst aus.
 
 ## Veröffentlichen
 
-Empfohlen: [Vercel](https://vercel.com) — Repository verbinden, fertig.
-Ein statischer Export ist ebenfalls möglich, sobald das Formular über einen
-externen Dienst läuft.
+Die Seite läuft auf **Cloudflare Workers**, angepasst über
+[OpenNext](https://opennext.js.org/cloudflare). Vercel scheidet aus: Dessen
+kostenloser Hobby-Plan erlaubt keine kommerzielle Nutzung, und für eine
+Autovermietung wäre Pro fällig. Cloudflares kostenlose Stufe erlaubt sie.
+
+### Die Dateien
+
+| Datei | Wofür |
+| --- | --- |
+| `wrangler.jsonc` | Name des Workers, Kompatibilitätsflags, Assets, Bildoptimierung |
+| `open-next.config.ts` | Wie Next.js für Workers umgebaut wird |
+
+Zwei Flags stehen in `wrangler.jsonc` und dürfen nicht weg: `nodejs_compat`,
+weil `lib/mail.ts` und `lib/ics.ts` `Buffer` benutzen, und
+`global_fetch_strictly_public`, damit Aufrufe an Supabase, Resend und
+Turnstile wirklich nach draußen gehen.
+
+### Befehle
+
+```bash
+npm run cf:preview   # baut und startet den Worker lokal (echte Workers-Laufzeit)
+npm run cf:deploy    # baut und veröffentlicht
+```
+
+`npm run dev` bleibt für die tägliche Arbeit — das ist schneller. Der
+Preview-Befehl ist die Probe vor dem Veröffentlichen, weil er in derselben
+Laufzeit läuft wie später die Live-Seite.
+
+### Zugangsdaten: zwei Sorten, zwei Wege
+
+Das ist die Stelle, an der es still schiefgeht, wenn man es verwechselt.
+
+**Zur Laufzeit gelesen** — als Secret in Cloudflare hinterlegen:
+
+```bash
+npx wrangler secret put SUPABASE_SERVICE_ROLE_KEY
+npx wrangler secret put NEXT_PUBLIC_SUPABASE_URL
+npx wrangler secret put ADMIN_PASSWORD
+npx wrangler secret put ADMIN_SESSION_SECRET
+npx wrangler secret put TURNSTILE_SECRET_KEY
+npx wrangler secret put RESEND_API_KEY
+npx wrangler secret put ANFRAGE_ABSENDER
+npx wrangler secret put ANFRAGE_EMPFAENGER
+```
+
+`NEXT_PUBLIC_SUPABASE_URL` steht trotz seines Namens hier: Die Variable wird
+nur serverseitig gelesen (`lib/supabase.ts`), deshalb bleibt im Bundle ein
+echter Zugriff zur Laufzeit stehen.
+
+**Zur Bauzeit fest eingesetzt** — muss beim Bauen in der Umgebung stehen:
+
+```
+NEXT_PUBLIC_TURNSTILE_SITE_KEY
+```
+
+Dieser Wert landet im Browser-Bundle und wird beim Bauen hineingeschrieben.
+Ihn nachträglich als Secret zu setzen bringt **nichts** — er muss in
+`.env.local` stehen (oder in der Umgebung), *bevor* `cf:deploy` läuft.
+Ändert er sich, muss neu gebaut und veröffentlicht werden.
+
+### Domain verbinden
+
+Im Cloudflare-Dashboard: **Workers & Pages → beclassic → Settings → Domains &
+Routes → Custom Domain** hinzufügen (`beclassic.at` und `www.beclassic.at`).
+Cloudflare legt die DNS-Einträge dabei selbst an und ersetzt die alten.
+
+Wichtig: Die bisherigen `A`-Einträge zeigten auf den GoDaddy-Baukasten. Der
+lieferte zwar direkt eine Seite aus, verwarf aber Anfragen von Cloudflares
+Proxy — daher der Fehler 522. Diese Einträge müssen weg, sonst bleibt der
+Fehler bestehen.

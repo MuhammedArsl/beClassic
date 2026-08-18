@@ -8,6 +8,8 @@
 
 export const site = {
   name: 'BeClassic',
+  /** Vertretungsbefugte Person — Pflichtangabe im Impressum (§ 5 ECG). */
+  owner: 'Yusuf Özcan',
   /** Wird im Logo als feine Unterzeile gesetzt. */
   tagline: 'Klassische Automobile',
   description:
@@ -16,12 +18,11 @@ export const site = {
   url: 'https://beclassic.at',
 
   contact: {
-    // TODO: echte Kontaktdaten eintragen.
     // Die Vorwahl +43 steht für Österreich; `phoneHref` ist dieselbe Nummer
     // ohne Leerzeichen — sie landet im tel:-Link.
-    email: 'anfrage@beclassic.at',
-    phone: '+43 000 0000000',
-    phoneHref: '+430000000000',
+    email: 'beclassicvienna@outlook.com',
+    phone: '+43 676 4427719',
+    phoneHref: '+436764427719',
     /** Erscheint als Einzugsgebiet in den strukturierten Daten. */
     city: 'Wien, Österreich',
     /** Optional: vollständige Adresse für Impressum und Footer. */
@@ -34,9 +35,11 @@ export const site = {
   },
 
   social: {
-    // TODO: echten Instagram-Handle eintragen. Leerer String blendet den Link aus.
-    instagram: 'https://instagram.com/beclassic',
-    instagramHandle: '@beclassic',
+    // Ohne den ?igsh=-Parameter aus dem Teilen-Link: Der ist ein
+    // Sitzungs-Kennzeichen von Instagram und gehört nicht in einen
+    // dauerhaften Verweis. Leerer String blendet den Link aus.
+    instagram: 'https://www.instagram.com/beclassicvienna',
+    instagramHandle: '@beclassicvienna',
   },
 
   /**

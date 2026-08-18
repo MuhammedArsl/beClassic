@@ -160,13 +160,18 @@ function FilterChip({
 
 function InquiryRow({ inquiry }: { inquiry: Inquiry }) {
   return (
+    /* Zuvor eine umbrechende Flex-Zeile: auf dem Handy passten Stand, Name
+       und Termin nicht nebeneinander, der Termin rutschte in eine eigene
+       Zeile und stand dort rechtsbündig unter dem Namen — als gehörte er
+       nicht dazu. Als Grid stapelt die Zeile auf schmalen Geräten sauber
+       untereinander und wird erst ab 640 px wieder dreispaltig. */
     <Link
       href={`/admin/anfrage/${inquiry.id}`}
-      className="group flex flex-wrap items-center gap-x-6 gap-y-3 px-1 py-5 transition-colors duration-300 hover:bg-shell/60"
+      className="group grid gap-x-6 gap-y-2 px-1 py-4 transition-colors duration-300 hover:bg-shell/60 sm:grid-cols-[auto_1fr_auto] sm:items-center sm:py-5"
     >
-      <StatusBadge status={inquiry.status} />
+      <StatusBadge status={inquiry.status} className="justify-self-start" />
 
-      <div className="min-w-[12rem] flex-1">
+      <div className="min-w-0">
         <p className="text-[1.0625rem] text-ink transition-colors group-hover:text-champagne">
           {fullName(inquiry)}
         </p>
@@ -176,7 +181,7 @@ function InquiryRow({ inquiry }: { inquiry: Inquiry }) {
         </p>
       </div>
 
-      <div className="text-right">
+      <div className="sm:text-right">
         <p className="text-[0.9375rem] text-ink">
           {/* Steht ein Termin fest, zählt der — sonst der Wunschtermin. */}
           {inquiry.appointment_start

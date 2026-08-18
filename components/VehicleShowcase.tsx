@@ -43,7 +43,7 @@ export default function VehicleShowcase({
   const story = compact ? vehicle.story.slice(0, 1) : vehicle.story
 
   return (
-    <section id="fahrzeug" className="relative bg-cream py-28 sm:py-36">
+    <section id="fahrzeug" className="relative bg-cream py-20 sm:py-36">
       <div className="mx-auto max-w-[1400px] px-6 sm:px-10">
         <SectionIntro
           index={showIndex ? '01' : undefined}
@@ -55,10 +55,15 @@ export default function VehicleShowcase({
       </div>
 
       {/* Großformatiges Fahrzeugbild mit dezentem Parallax */}
-      <div className="mx-auto mt-20 max-w-[1400px] px-6 sm:mt-24 sm:px-10">
+      <div className="mx-auto mt-12 max-w-[1400px] px-6 sm:mt-24 sm:px-10">
         <Reveal variant="image">
+          {/* Die Fotos sind durchweg 3:2-Querformat. Im früheren 4/5-Rahmen
+              blieben davon auf dem Handy nur 53 % der Bildbreite übrig — der
+              Wagen wurde vorn und hinten abgeschnitten. Mobil steht das Bild
+              deshalb in seinem eigenen Format, erst ab sm wird beschnitten,
+              wo die Breite dafür reicht. */}
           <Parallax
-            className="relative aspect-[4/5] w-full sm:aspect-[16/9] lg:aspect-[21/9]"
+            className="relative aspect-[3/2] w-full sm:aspect-[16/9] lg:aspect-[21/9]"
             speed={0.14}
           >
             <div className="relative h-full w-full">
@@ -78,19 +83,55 @@ export default function VehicleShowcase({
           <dl className="grid grid-cols-2 border-t border-line md:grid-cols-4">
             {vehicle.highlights.map((item, index) => {
               const total = vehicle.highlights.length
-              // Trennlinien: mobil 2 Spalten, ab md 4 Spalten in einer Reihe.
-              const endOfMobileRow = index % 2 === 1
-              const lastCell = index === total - 1
-              const inLastMobileRow = index >= total - 2
+
+              /* Das Raster hat zwei Zustände: mobil zwei Spalten, ab md vier.
+                 Beide brauchen ihre eigenen Trennlinien und ihre eigene
+                 Einrückung — sonst stand die erste Spalte um die Zellen-
+                 polsterung eingerückt neben der Überschrift, und die letzte
+                 Zelle bekam eine Linie zu viel.
+
+                 Regel: Linie rechts überall ausser am Zeilenende, Linie
+                 unten überall ausser in der letzten Zeile, Polsterung nur
+                 dort, wo eine Nachbarzelle daneben steht. */
+              const atRowStart = { mobile: index % 2 === 0, desktop: index % 4 === 0 }
+              const atRowEnd = {
+                mobile: index % 2 === 1 || index === total - 1,
+                desktop: index % 4 === 3 || index === total - 1,
+              }
+              const inLastRow = {
+                mobile: index >= (Math.ceil(total / 2) - 1) * 2,
+                desktop: index >= (Math.ceil(total / 4) - 1) * 4,
+              }
 
               return (
                 <div
                   key={item.label}
                   className={[
-                    'px-2 py-8 sm:px-6',
-                    endOfMobileRow ? 'md:border-r md:border-line' : 'border-r border-line',
-                    lastCell ? 'md:border-r-0' : '',
-                    inLastMobileRow ? '' : 'border-b border-line md:border-b-0',
+                    'py-7 sm:py-8',
+                    atRowStart.mobile
+                      ? atRowStart.desktop
+                        ? ''
+                        : 'md:pl-6'
+                      : 'pl-4 sm:pl-6',
+                    atRowEnd.mobile
+                      ? atRowEnd.desktop
+                        ? ''
+                        : 'md:pr-6'
+                      : 'pr-4 sm:pr-6',
+                    atRowEnd.mobile
+                      ? atRowEnd.desktop
+                        ? ''
+                        : 'md:border-r md:border-line'
+                      : atRowEnd.desktop
+                        ? 'border-r border-line md:border-r-0'
+                        : 'border-r border-line',
+                    inLastRow.mobile
+                      ? inLastRow.desktop
+                        ? ''
+                        : 'md:border-b md:border-line'
+                      : inLastRow.desktop
+                        ? 'border-b border-line md:border-b-0'
+                        : 'border-b border-line',
                   ]
                     .filter(Boolean)
                     .join(' ')}
@@ -107,9 +148,9 @@ export default function VehicleShowcase({
       </div>
 
       {/* Geschichte — in der vollen Fassung mit den technischen Daten daneben */}
-      <div className="mx-auto mt-20 max-w-[1400px] px-6 sm:mt-24 sm:px-10">
-        <div className="grid gap-16 lg:grid-cols-12 lg:gap-20">
-          <div className={compact ? 'lg:col-span-8' : 'lg:col-span-7'}>
+      <div className="mx-auto mt-16 max-w-[1400px] px-6 sm:mt-24 sm:px-10">
+        <div className="grid gap-12 sm:gap-16 lg:grid-cols-12 lg:gap-20">
+          <div className={`min-w-0 ${compact ? 'lg:col-span-8' : 'lg:col-span-7'}`}>
             <Reveal>
               <p className="eyebrow">Die Geschichte</p>
             </Reveal>
@@ -133,7 +174,7 @@ export default function VehicleShowcase({
           {/* Technische Daten: zehn Zeilen sind auf der Landingpage zu viel —
               die vier Eckdaten über dem Text sagen dort das Wesentliche. */}
           {!compact && (
-            <div className="lg:col-span-5">
+            <div className="min-w-0 lg:col-span-5">
               <Reveal delay={100}>
                 <div className="border-t border-ink pt-8">
                   <p className="eyebrow">Technische Daten</p>
@@ -173,8 +214,10 @@ export default function VehicleShowcase({
                   <div
                     className={`media-zoom relative w-full overflow-hidden bg-sand ${
                       image.span === 'wide'
-                        ? 'aspect-[16/9] lg:aspect-[21/9]'
-                        : 'aspect-[4/5]'
+                        ? 'aspect-[3/2] sm:aspect-[16/9] lg:aspect-[21/9]'
+                        : // Unterhalb von md steht die Galerie einspaltig über
+                          // die volle Breite — dort passt das Originalformat.
+                          'aspect-[3/2] md:aspect-[4/5]'
                     }`}
                   >
                     <Image

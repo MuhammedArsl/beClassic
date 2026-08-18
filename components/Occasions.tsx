@@ -25,7 +25,7 @@ export default function Occasions({ useCases, images }: OccasionsProps) {
   const [lead, ...rest] = images
 
   return (
-    <section id="vermietung" className="relative bg-ink py-28 text-cream sm:py-36">
+    <section id="vermietung" className="relative bg-ink py-20 text-cream sm:py-36">
       <div className="mx-auto max-w-[1400px] px-6 sm:px-10">
         <SectionIntro
           index="02"
@@ -36,11 +36,11 @@ export default function Occasions({ useCases, images }: OccasionsProps) {
         />
 
         {/* Anlässe als ruhige Liste — je Anlass eine Zeile, kein Bild. */}
-        <ul className="mt-16 grid grid-cols-1 gap-x-16 border-t border-line-invert sm:mt-20 sm:grid-cols-2">
+        <ul className="mt-12 grid grid-cols-1 gap-x-16 border-t border-line-invert sm:mt-20 sm:grid-cols-2">
           {useCases.map((useCase, index) => (
             <li key={useCase.id} className="border-b border-line-invert">
               <Reveal delay={(index % 2) * 80}>
-                <div className="py-7">
+                <div className="py-6 sm:py-7">
                   <h3 className="font-display text-[1.625rem] font-normal leading-snug text-cream sm:text-[1.875rem]">
                     {useCase.title}
                   </h3>
@@ -56,10 +56,12 @@ export default function Occasions({ useCases, images }: OccasionsProps) {
 
       {/* Grosses, ruhiges Bild über die volle Breite */}
       {lead && (
-        <div className="mt-20 sm:mt-24">
+        <div className="mt-14 sm:mt-24">
           <Reveal variant="image">
+            {/* 3:2 auf dem Handy — das Format der Aufnahmen. Siehe die
+                Begründung in VehicleShowcase. */}
             <Parallax
-              className="relative aspect-[4/5] w-full sm:aspect-[16/9] lg:aspect-[2.4/1]"
+              className="relative aspect-[3/2] w-full sm:aspect-[16/9] lg:aspect-[2.4/1]"
               speed={0.18}
             >
               <div className="relative h-full w-full">
@@ -86,7 +88,7 @@ export default function Occasions({ useCases, images }: OccasionsProps) {
                 className={index % 2 === 1 ? 'sm:mt-20 lg:mt-28' : ''}
               >
                 <Reveal variant="image" delay={index * 100}>
-                  <div className="media-zoom relative aspect-[4/5] w-full overflow-hidden bg-graphite sm:aspect-[3/4]">
+                  <div className="media-zoom relative aspect-[3/2] w-full overflow-hidden bg-graphite sm:aspect-[3/4]">
                     <Image
                       src={image.src}
                       alt={image.alt}

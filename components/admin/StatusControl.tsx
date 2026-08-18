@@ -97,7 +97,9 @@ export default function StatusControl({
             defaultValue={note ?? ''}
             rows={4}
             placeholder="Nur für Sie sichtbar — Preis, Absprachen, Besonderheiten …"
-            className="w-full resize-y border border-line bg-cream px-4 py-3 text-[0.9375rem] leading-relaxed text-ink outline-none transition-colors duration-300 placeholder:text-mist/70 focus:border-ink"
+            /* text-base = 16 px: darunter zoomt Safari auf dem iPhone beim
+               Hineintippen automatisch heran. */
+            className="w-full resize-y border border-line bg-cream px-4 py-3 text-base leading-relaxed text-ink outline-none transition-colors duration-300 placeholder:text-mist/70 focus:border-ink"
           />
           <button
             type="submit"

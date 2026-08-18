@@ -40,20 +40,26 @@ export default function Navigation({ variant = 'overlay' }: NavigationProps) {
           : 'border-b border-transparent bg-transparent'
       }`}
     >
+      {/* `gap` statt reinem `justify-between`: damit Wortmarke und Knopf auch
+          auf schmalen Geräten garantiert Abstand halten, statt sich bei
+          390 px auf null Lücke zusammenzuschieben. */}
       <div
-        className={`mx-auto flex max-w-[1400px] items-center justify-between px-6 transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] sm:px-10 ${
-          compact ? 'h-[4.5rem]' : 'h-24 sm:h-28'
+        className={`mx-auto flex max-w-[1400px] items-center justify-between gap-4 px-6 transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] sm:gap-8 sm:px-10 ${
+          compact ? 'h-16 sm:h-[4.5rem]' : 'h-20 sm:h-28'
         }`}
       >
         <Logo
           tone={onDarkGround ? 'light' : 'dark'}
           showTagline={!compact}
-          className={compact ? 'origin-left scale-[0.92]' : ''}
+          // Die Unterzeile erst ab 640 px: darunter bricht sie zweizeilig um
+          // und läuft in den Knopf hinein.
+          taglineClassName="hidden sm:block"
+          className={`min-w-0 ${compact ? 'origin-left scale-[0.92]' : ''}`.trim()}
         />
 
         <a
           href="#anfrage"
-          className={`group relative overflow-hidden rounded-full border px-6 py-2.5 text-[0.8125rem] font-normal uppercase tracking-[0.18em] transition-colors duration-500 sm:px-8 sm:py-3 sm:text-[0.875rem] sm:tracking-[0.2em] ${
+          className={`group relative inline-flex shrink-0 items-center overflow-hidden rounded-full border px-5 py-3 text-[0.75rem] font-normal uppercase tracking-[0.14em] transition-colors duration-500 sm:px-8 sm:text-[0.875rem] sm:tracking-[0.2em] ${
             onDarkGround
               ? 'border-cream/35 text-cream hover:border-cream'
               : 'border-ink/25 text-ink hover:border-ink'

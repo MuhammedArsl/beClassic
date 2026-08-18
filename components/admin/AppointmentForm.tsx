@@ -164,5 +164,10 @@ export default function AppointmentForm({
 const labelClass =
   'block text-[0.8125rem] font-medium uppercase tracking-[0.14em] text-mist'
 
+/**
+ * Mindestens 1rem (16 px): Safari auf dem iPhone zoomt beim Hineintippen
+ * automatisch heran, sobald ein Eingabefeld kleiner gesetzt ist — die Seite
+ * bleibt danach verschoben stehen. Darunter darf hier nichts liegen.
+ */
 const fieldClass =
-  'mt-2 w-full border border-line bg-cream px-4 py-3 text-[0.9375rem] text-ink outline-none transition-colors duration-300 focus:border-ink'
+  'mt-2 w-full border border-line bg-cream px-4 py-3 text-base text-ink outline-none transition-colors duration-300 focus:border-ink'

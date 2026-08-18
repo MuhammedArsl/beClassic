@@ -55,7 +55,7 @@ export default function Composer({
   }, [state])
 
   return (
-    <div className="border border-line bg-shell/40 p-6">
+    <div className="border border-line bg-shell/40 p-4 sm:p-6">
       {/* Umschalter */}
       <div className="flex gap-2" role="tablist">
         <ModeButton
@@ -95,7 +95,9 @@ export default function Composer({
               ? `Ihre Antwort an ${customerEmail} …`
               : 'Was der Kunde per Telefon oder E-Mail mitgeteilt hat …'
           }
-          className="w-full resize-y border border-line bg-cream px-4 py-3 text-[0.9375rem] leading-relaxed text-ink outline-none transition-colors duration-300 placeholder:text-mist/70 focus:border-ink"
+          /* text-base = 16 px: darunter zoomt Safari auf dem iPhone beim
+             Hineintippen automatisch heran. */
+          className="w-full resize-y border border-line bg-cream px-4 py-3 text-base leading-relaxed text-ink outline-none transition-colors duration-300 placeholder:text-mist/70 focus:border-ink"
         />
 
         <div className="mt-4 flex flex-wrap items-center justify-between gap-4">

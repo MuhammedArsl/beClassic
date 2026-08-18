@@ -190,11 +190,16 @@ export default function InquiryForm({
   }
 
   return (
-    <section id="anfrage" className="relative bg-shell py-28 sm:py-36">
+    <section id="anfrage" className="relative bg-shell py-20 sm:py-36">
       <div className="mx-auto max-w-[1400px] px-6 sm:px-10">
-        <div className="grid gap-16 lg:grid-cols-12 lg:gap-20">
+        {/* `min-w-0` an beiden Spalten: Grid-Kinder haben von Haus aus
+            `min-width: auto` und dürfen dadurch breiter werden als ihre
+            Spalte. Bei 320 px Gerätebreite wurde die Spalte so auf 300 px
+            aufgebläht, obwohl nur 272 px zur Verfügung standen — die rechte
+            Kante von Feldern und Text wurde abgeschnitten. */}
+        <div className="grid gap-12 sm:gap-16 lg:grid-cols-12 lg:gap-20">
           {/* Linke Spalte: Kontext und Kontakt */}
-          <div className="lg:col-span-5">
+          <div className="min-w-0 lg:col-span-5">
             <div className="lg:sticky lg:top-32">
               <Reveal>
                 <div className="flex items-center gap-4">
@@ -236,16 +241,19 @@ export default function InquiryForm({
               <Reveal delay={380}>
                 <div className="mt-10 border-t border-line pt-8">
                   <p className="eyebrow">Direkter Kontakt</p>
-                  <div className="mt-5 space-y-2">
+                  {/* `space-y-5` statt `space-y-2`: die Trefferflächen von
+                      `.tap-area` sind 44 px hoch und dürfen einander nicht
+                      überlappen (siehe globals.css). */}
+                  <div className="mt-5 space-y-5 sm:space-y-2">
                     <a
                       href={`mailto:${site.contact.email}`}
-                      className="link-underline block w-fit text-[1.0625rem] font-normal text-ink"
+                      className="link-underline tap-area block w-fit text-[1.0625rem] font-normal text-ink"
                     >
                       {site.contact.email}
                     </a>
                     <a
                       href={`tel:${site.contact.phoneHref}`}
-                      className="link-underline block w-fit text-[1.0625rem] font-normal text-ink"
+                      className="link-underline tap-area block w-fit text-[1.0625rem] font-normal text-ink"
                     >
                       {site.contact.phone}
                     </a>
@@ -256,12 +264,16 @@ export default function InquiryForm({
           </div>
 
           {/* Rechte Spalte: Formular oder Bestätigung */}
-          <div className="lg:col-span-7">
+          <div className="min-w-0 lg:col-span-7">
             {status === 'success' ? (
               <SuccessMessage onReset={() => setStatus('idle')} />
             ) : (
               <Reveal delay={120}>
-                <form onSubmit={handleSubmit} noValidate className="space-y-10">
+                <form
+                  onSubmit={handleSubmit}
+                  noValidate
+                  className="space-y-8 sm:space-y-10"
+                >
                   {/* Spam-Falle: für Menschen unsichtbar und nicht per Tab
                       erreichbar, für Screenreader ausgeblendet. Bots füllen
                       solche Felder trotzdem aus und verraten sich dadurch.
@@ -286,7 +298,7 @@ export default function InquiryForm({
                   </div>
 
                   {/* Name */}
-                  <div className="grid gap-8 sm:grid-cols-2">
+                  <div className="grid gap-6 sm:grid-cols-2 sm:gap-8">
                     <Field
                       label="Vorname"
                       name="firstName"
@@ -308,7 +320,7 @@ export default function InquiryForm({
                   </div>
 
                   {/* Kontakt */}
-                  <div className="grid gap-8 sm:grid-cols-2">
+                  <div className="grid gap-6 sm:grid-cols-2 sm:gap-8">
                     <Field
                       label="E-Mail"
                       name="email"
@@ -332,7 +344,7 @@ export default function InquiryForm({
                   </div>
 
                   {/* Zeitraum */}
-                  <div className="grid gap-8 sm:grid-cols-2">
+                  <div className="grid gap-6 sm:grid-cols-2 sm:gap-8">
                     <Field
                       label="Gewünschtes Datum"
                       name="startDate"
@@ -422,22 +434,25 @@ export default function InquiryForm({
                   <div>
                     <label className="flex cursor-pointer items-start gap-4">
                       {/* Eigene Checkbox: Rahmen füllt sich, Haken blendet ein */}
-                      <span className="relative mt-1 flex h-4 w-4 shrink-0 items-center justify-center">
+                      {/* 16 px waren mit dem Daumen kaum zu treffen. 20 px
+                          plus die umschließende Beschriftung, die ebenfalls
+                          schaltet, reichen aus. */}
+                      <span className="relative mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center">
                         <input
                           type="checkbox"
                           name="privacy"
                           checked={data.privacy}
                           onChange={update}
                           aria-invalid={Boolean(errors.privacy)}
-                          className={`peer h-4 w-4 cursor-pointer appearance-none border bg-transparent transition-colors duration-300 checked:border-ink checked:bg-ink ${
+                          className={`peer h-5 w-5 cursor-pointer appearance-none border bg-transparent transition-colors duration-300 checked:border-ink checked:bg-ink ${
                             errors.privacy ? 'border-champagne' : 'border-line-strong'
                           }`}
                         />
                         <svg
                           aria-hidden="true"
                           viewBox="0 0 12 10"
-                          width="10"
-                          height="8"
+                          width="12"
+                          height="10"
                           fill="none"
                           className="pointer-events-none absolute text-cream opacity-0 transition-opacity duration-300 peer-checked:opacity-100"
                         >

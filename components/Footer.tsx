@@ -7,8 +7,8 @@ export default function Footer() {
 
   return (
     <footer className="border-t border-line-invert bg-ink text-cream">
-      <div className="mx-auto max-w-[1400px] px-6 py-20 sm:px-10 sm:py-24">
-        <div className="grid gap-14 md:grid-cols-12">
+      <div className="mx-auto max-w-[1400px] px-6 py-16 sm:px-10 sm:py-24">
+        <div className="grid gap-12 sm:gap-14 md:grid-cols-12">
           {/* Marke */}
           <div className="md:col-span-5">
             <Logo tone="light" />
@@ -21,12 +21,15 @@ export default function Footer() {
           {/* Navigation */}
           <div className="md:col-span-3">
             <p className="eyebrow text-cream/55">Navigation</p>
-            <ul className="mt-6 space-y-3">
+            {/* Auf dem Handy weiter auseinander: `.tap-area` vergrössert die
+                Trefferfläche jedes Links auf 44 px, und die dürfen sich nicht
+                gegenseitig überlappen (siehe globals.css). */}
+            <ul className="mt-6 space-y-5 sm:space-y-3">
               {site.navigation.map((item) => (
                 <li key={item.href}>
                   <a
                     href={item.href}
-                    className="link-underline text-[1.0625rem] font-normal text-cream/75 transition-colors duration-300 hover:text-cream"
+                    className="link-underline tap-area inline-block text-[1.0625rem] font-normal text-cream/75 transition-colors duration-300 hover:text-cream"
                   >
                     {item.label}
                   </a>
@@ -38,11 +41,11 @@ export default function Footer() {
           {/* Kontakt */}
           <div className="md:col-span-4">
             <p className="eyebrow text-cream/55">Kontakt</p>
-            <ul className="mt-6 space-y-3">
+            <ul className="mt-6 space-y-5 sm:space-y-3">
               <li>
                 <a
                   href={`mailto:${site.contact.email}`}
-                  className="link-underline text-[1.0625rem] font-normal text-cream/75 transition-colors duration-300 hover:text-cream"
+                  className="link-underline tap-area inline-block text-[1.0625rem] font-normal text-cream/75 transition-colors duration-300 hover:text-cream"
                 >
                   {site.contact.email}
                 </a>
@@ -50,7 +53,7 @@ export default function Footer() {
               <li>
                 <a
                   href={`tel:${site.contact.phoneHref}`}
-                  className="link-underline text-[1.0625rem] font-normal text-cream/75 transition-colors duration-300 hover:text-cream"
+                  className="link-underline tap-area inline-block text-[1.0625rem] font-normal text-cream/75 transition-colors duration-300 hover:text-cream"
                 >
                   {site.contact.phone}
                 </a>
@@ -61,7 +64,7 @@ export default function Footer() {
                     href={site.social.instagram}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="link-underline inline-flex items-center gap-2 text-[1.0625rem] font-normal text-cream/75 transition-colors duration-300 hover:text-cream"
+                    className="link-underline tap-area inline-flex items-center gap-2 text-[1.0625rem] font-normal text-cream/75 transition-colors duration-300 hover:text-cream"
                   >
                     <svg
                       width="14"
@@ -97,20 +100,20 @@ export default function Footer() {
         </div>
 
         {/* Fußzeile */}
-        <div className="mt-20 flex flex-col gap-6 border-t border-line-invert pt-8 sm:flex-row sm:items-center sm:justify-between">
+        <div className="mt-14 flex flex-col gap-6 border-t border-line-invert pt-8 sm:mt-20 sm:flex-row sm:items-center sm:justify-between">
           <p className="text-[0.875rem] font-normal text-cream/50">
             © {year} {site.name}. Alle Rechte vorbehalten.
           </p>
           <div className="flex items-center gap-8">
             <Link
               href="/impressum"
-              className="link-underline text-[0.875rem] font-normal text-cream/65 transition-colors duration-300 hover:text-cream"
+              className="link-underline tap-area inline-block text-[0.875rem] font-normal text-cream/65 transition-colors duration-300 hover:text-cream"
             >
               Impressum
             </Link>
             <Link
               href="/datenschutz"
-              className="link-underline text-[0.875rem] font-normal text-cream/65 transition-colors duration-300 hover:text-cream"
+              className="link-underline tap-area inline-block text-[0.875rem] font-normal text-cream/65 transition-colors duration-300 hover:text-cream"
             >
               Datenschutz
             </Link>
