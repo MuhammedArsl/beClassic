@@ -7,6 +7,7 @@ import {
   getInquiry,
   getMessages,
   occasionLabel,
+  replySubject,
   type Inquiry,
   type InquiryMessage,
 } from '@/lib/inquiries'
@@ -115,6 +116,8 @@ export default async function InquiryDetailPage({
               <Composer
                 inquiryId={inquiry.id}
                 customerEmail={inquiry.email}
+                customerFirstName={inquiry.first_name}
+                occasion={inquiry.occasion}
                 mailConfigured={mailConfigured}
               />
             </div>
@@ -128,10 +131,19 @@ export default async function InquiryDetailPage({
               <h2 className="eyebrow">Kontakt</h2>
               <div className="mt-4 space-y-2">
                 <a
+                  /* Derselbe Betreff wie bei einer Antwort aus dem
+                     Verlauf — für den Kunden soll es eine Unterhaltung
+                     sein, kein Nebeneinander verschiedener Betreffzeilen. */
                   href={`mailto:${inquiry.email}?subject=${encodeURIComponent(
-                    `Ihre Anfrage bei ${site.name}`,
+                    replySubject(inquiry.occasion),
                   )}`}
-                  className="link-underline block w-fit text-[1.0625rem] text-ink"
+                  /* break-all, weil eine E-Mail-Adresse keine Leerzeichen
+                     hat: Ohne Umbruchmöglichkeit ragte sie auf schmalen
+                     Geräten aus der Spalte und wurde von `overflow-x: hidden`
+                     (globals.css) stillschweigend abgeschnitten — sichtbar
+                     erst ab etwa 38 Zeichen, also gerade bei langen
+                     Firmenadressen. */
+                  className="link-underline block w-fit break-all text-[1.0625rem] text-ink"
                 >
                   {inquiry.email}
                 </a>

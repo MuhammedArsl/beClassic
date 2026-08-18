@@ -7,13 +7,15 @@ import {
   fullName,
   getInquiry,
   occasionLabel,
+  replySubject,
+  replyText,
   updateInquiry,
   formatDateTime,
   INQUIRY_STATUSES,
   type InquiryStatus,
 } from '@/lib/inquiries'
 import { buildIcs, icsFilename } from '@/lib/ics'
-import { sendMail } from '@/lib/mail'
+import { isMailConfigured, sendMail } from '@/lib/mail'
 import { site } from '@/data/site'
 
 /**
@@ -87,8 +89,8 @@ export async function sendReply(
     const mail = await sendMail({
       to: inquiry.email,
       replyTo: site.contact.email,
-      subject: `Ihre Anfrage bei ${site.name} — ${occasionLabel(inquiry.occasion)}`,
-      text: `Hallo ${inquiry.first_name},\n\n${body}\n\nHerzliche Grüsse\n${site.name}\n${site.contact.phone}`,
+      subject: replySubject(inquiry.occasion),
+      text: replyText(inquiry.first_name, body),
     })
 
     await addMessage({
@@ -106,12 +108,18 @@ export async function sendReply(
 
     refresh(id)
 
-    return {
-      ok: true,
-      message: mail.sent
-        ? 'Antwort versendet und im Verlauf gespeichert.'
-        : `Im Verlauf gespeichert, aber nicht versendet: ${mail.error}`,
-    }
+    /* Drei Fälle, die sich für den Benutzer deutlich unterscheiden — und
+       früher alle dieselbe Meldung bekamen. Ohne eingerichteten Versand ist
+       „nicht versendet“ kein Fehler, sondern der geplante Ablauf: Der
+       Browser öffnet gleich das Mailprogramm mit dem fertigen Text
+       (siehe components/admin/Composer.tsx). */
+    const message = mail.sent
+      ? 'Antwort versendet und im Verlauf gespeichert.'
+      : isMailConfigured()
+        ? `Im Verlauf gespeichert, aber nicht versendet: ${mail.error}`
+        : 'Im Verlauf gespeichert. Zum Abschicken öffnet sich Ihr Mailprogramm.'
+
+    return { ok: true, message }
   } catch (error) {
     return fail(error)
   }

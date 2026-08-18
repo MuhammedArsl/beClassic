@@ -1,4 +1,4 @@
-import { occasionOptions } from '@/data/site'
+import { occasionOptions, site } from '@/data/site'
 
 /**
  * Typen, Beschriftungen und Formatierer rund um Anfragen.
@@ -119,4 +119,51 @@ export function countByStatus(
   const counts = { neu: 0, in_bearbeitung: 0, akzeptiert: 0, abgelehnt: 0 }
   for (const inquiry of inquiries) counts[inquiry.status] += 1
   return counts
+}
+
+/* ── Antwort an den Kunden ──────────────────────────────────── */
+
+/**
+ * Betreff und Text einer Antwort — an einer Stelle, weil zwei Seiten sie
+ * brauchen und sonst mit der Zeit auseinanderlaufen:
+ *
+ *   der Server, wenn er die Antwort über Resend verschickt
+ *   (app/admin/actions.ts),
+ *
+ *   der Browser, wenn kein Versand eingerichtet ist und stattdessen das
+ *   Mailprogramm mit fertigem Text geöffnet wird
+ *   (components/admin/Composer.tsx).
+ *
+ * Der Wortlaut muss in beiden Fällen derselbe sein — der Kunde soll nicht
+ * merken, auf welchem Weg die Nachricht entstanden ist.
+ */
+export function replySubject(occasion: string): string {
+  return `Ihre Anfrage bei ${site.name} — ${occasionLabel(occasion)}`
+}
+
+export function replyText(firstName: string, body: string): string {
+  return `Hallo ${firstName},\n\n${body}\n\nHerzliche Grüsse\n${site.name}\n${site.contact.phone}`
+}
+
+/**
+ * `mailto:`-Adresse mit Empfänger, Betreff und fertigem Text.
+ *
+ * Zur Länge: Mailprogramme kürzen sehr lange `mailto:`-Adressen — Outlook
+ * unter Windows bei etwa 2000 Zeichen. Das ist verkraftbar, weil der Text
+ * ohnehin vollständig im Verlauf steht und dort notfalls herauskopiert
+ * werden kann. Bei üblichen Antwortlängen tritt es nicht auf.
+ */
+export function replyMailtoUrl(options: {
+  email: string
+  firstName: string
+  occasion: string
+  body: string
+}): string {
+  const query = new URLSearchParams({
+    subject: replySubject(options.occasion),
+    body: replyText(options.firstName, options.body),
+  })
+  // URLSearchParams kodiert Leerzeichen als „+“. In einer mailto-Adresse
+  // gehört dort %20 hin, sonst stehen Pluszeichen im Betreff des Kunden.
+  return `mailto:${options.email}?${query.toString().replace(/\+/g, '%20')}`
 }
