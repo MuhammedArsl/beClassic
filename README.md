@@ -83,26 +83,63 @@ nach `app/` zu verschieben. Details in `app/_spaeter/README.md`.
 
 ## Anfrageformular
 
-Aktuell **Frontend-Demo**: Das Formular validiert vollständig (Client *und*
-Server) und zeigt die Bestätigung — die Anfrage wird aber nur in der
-Server-Konsole ausgegeben, nicht versendet.
+Eine abgeschickte Anfrage wird in Supabase gespeichert und erscheint sofort
+im Dashboard unter `/admin`. Das passiert immer und hängt an nichts
+Weiterem — die folgenden Benachrichtigungen sagen dir nur, *dass* etwas da
+ist. Ohne sie geht nichts verloren, du musst nur selbst nachsehen.
 
-**E-Mail-Versand aktivieren** (Beispiel Resend):
+### Push aufs Handy (ntfy.sh) — eingerichtet
 
-```bash
-npm install resend
-```
+Sobald eine Anfrage eingeht, klingelt das Handy. Kein Konto, keine eigene
+Domain, kostenlos.
 
-`.env.local` anlegen:
+1. App **ntfy** installieren ([Android](https://play.google.com/store/apps/details?id=io.heckel.ntfy),
+   [iOS](https://apps.apple.com/app/ntfy/id1625396347), oder ntfy.sh im Browser).
+2. Dort **Subscribe to topic** und genau den Kanal eintragen, der in
+   `.env.local` unter `NTFY_TOPIC` steht:
+
+   ```
+   beclassic-Wik6SU0ZhH8_fj63
+   ```
+
+3. Fertig. Die Nachricht enthält Name, Wunschdatum und Fahrzeug; ein Tippen
+   öffnet die Anfrage im Dashboard.
+
+> **Der Kanalname ist das Passwort.** Auf dem öffentlichen ntfy.sh kann jeder
+> mitlesen, der ihn kennt — und jeder etwas hineinschreiben. Deshalb die
+> Zufallsfolge statt `beclassic-anfragen`, und deshalb stehen in der
+> Nachricht **keine Kontaktdaten**: nur Name und Anlass. Alles Weitere steht
+> hinter der Anmeldung im Dashboard.
+>
+> Gerät der Name doch einmal nach draußen, genügt ein neuer: Wert in
+> `.env.local` und im Cloudflare-Secret ändern, in der App neu abonnieren.
+
+### E-Mail — noch offen
+
+Die Mail trägt im Gegensatz zur Push-Nachricht **alle** Angaben inklusive
+Telefonnummer und Nachrichtentext, und „Antworten“ landet direkt beim
+Kunden. Sie ist außerdem die Voraussetzung dafür, Kunden **aus dem
+Dashboard heraus** zu antworten und Zusagen mit Kalendereintrag zu
+verschicken.
+
+Der Versand läuft über [Resend](https://resend.com) (kostenlos bis 3.000
+Mails/Monat, per `fetch` angebunden — kein zusätzliches Paket nötig):
 
 ```
 RESEND_API_KEY=re_xxxxxxxx
-ANFRAGE_EMPFAENGER=deine@adresse.de
+ANFRAGE_ABSENDER=BeClassic <anfrage@beclassic.at>
+ANFRAGE_EMPFAENGER=beclassicvienna@outlook.com
 ```
 
-Dann in `app/api/anfrage/route.ts` den dokumentierten Block einkommentieren.
-Der Rest — Validierung, Fehlerbehandlung, Bestätigungsansicht — ist bereits
-fertig.
+**Der Absender muss eine Domain sein, die dir gehört** — `@outlook.com`
+funktioniert dort nicht, `@beclassic.at` schon. Dazu bei Resend unter
+*Domains* `beclassic.at` eintragen und die drei angezeigten DNS-Einträge
+bei Cloudflare setzen. Der **Empfänger** darf dagegen jede beliebige
+Adresse sein, Outlook eingeschlossen.
+
+Ohne `RESEND_API_KEY` bleibt das Dashboard voll nutzbar: Antworten werden
+im Verlauf gespeichert, aber nicht versendet — daneben steht dann ein
+Hinweis und ein `mailto:`-Link.
 
 ---
 
@@ -242,6 +279,7 @@ npx wrangler secret put NEXT_PUBLIC_SUPABASE_URL
 npx wrangler secret put ADMIN_PASSWORD
 npx wrangler secret put ADMIN_SESSION_SECRET
 npx wrangler secret put TURNSTILE_SECRET_KEY
+npx wrangler secret put NTFY_TOPIC
 npx wrangler secret put RESEND_API_KEY
 npx wrangler secret put ANFRAGE_ABSENDER
 npx wrangler secret put ANFRAGE_EMPFAENGER

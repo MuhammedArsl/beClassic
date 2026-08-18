@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { createInquiry, occasionLabel, formatDate } from '@/lib/inquiries'
 import { sendMail } from '@/lib/mail'
+import { isPushConfigured, sendPush } from '@/lib/notify'
 import { site } from '@/data/site'
 
 /**
@@ -11,7 +12,12 @@ import { site } from '@/data/site'
  *   2. Serverseitige Prüfung der Pflichtfelder
  *   3. Speichern in Supabase — die Anfrage erscheint danach im Dashboard
  *      unter /admin
- *   4. Benachrichtigung an den Betreiber (nur falls RESEND_API_KEY gesetzt)
+ *   4. Benachrichtigung an den Betreiber, auf zwei voneinander
+ *      unabhängigen Wegen:
+ *        Push aufs Handy über ntfy.sh  (NTFY_TOPIC)
+ *        E-Mail mit allen Angaben      (RESEND_API_KEY + ANFRAGE_EMPFAENGER)
+ *      Beide sind einzeln abschaltbar; ist keiner eingerichtet, sieht
+ *      man die Anfrage erst im Dashboard.
  *
  *   Ist Supabase nicht eingerichtet, wird die Anfrage wie bisher nur in der
  *   Server-Konsole protokolliert. Die Seite bleibt dadurch ohne
@@ -246,10 +252,35 @@ export async function POST(request: Request) {
       return NextResponse.json({ ok: true })
     }
 
-    /* Benachrichtigung an den Betreiber. Bewusst nach dem Speichern und
-       ohne Auswirkung auf die Antwort: Die Anfrage liegt bereits sicher in
-       der Datenbank und ist im Dashboard sichtbar, auch wenn keine Mail
-       rausgeht. */
+    /* Benachrichtigung an den Betreiber — auf zwei Wegen, die sich nicht
+       gegenseitig bedingen. Beide laufen nach dem Speichern und ohne
+       Auswirkung auf die Antwort an den Besucher: Die Anfrage liegt bereits
+       sicher in der Datenbank und ist im Dashboard sichtbar, auch wenn
+       gerade gar nichts rausgeht. Ist keiner der Wege eingerichtet, bleibt
+       es dabei — dann sieht man die Anfrage erst im Dashboard. */
+    const dashboardLink = `${site.url}/admin/anfrage/${inquiry.id}`
+
+    /* Push aufs Handy. Bewusst knapp und ohne Kontaktdaten: Der Kanal auf
+       ntfy.sh ist allein durch seinen Namen geschützt (siehe lib/notify.ts).
+       Was hier steht, genügt für die Entscheidung „gleich oder später“ —
+       alles Weitere steht hinter der Anmeldung im Dashboard, auf das die
+       Nachricht beim Antippen verweist. */
+    if (isPushConfigured()) {
+      const push = await sendPush({
+        title: `Neue Anfrage: ${occasionLabel(data.occasion)}`,
+        message: [
+          `${data.firstName} ${data.lastName}`,
+          `Wunschdatum: ${formatDate(data.startDate)}`,
+          ...(data.vehicle ? [data.vehicle] : []),
+        ].join('\n'),
+        click: dashboardLink,
+      })
+
+      if (!push.sent) {
+        console.warn('[BeClassic] Push nicht gesendet:', push.error)
+      }
+    }
+
     const empfaenger = process.env.ANFRAGE_EMPFAENGER
     if (empfaenger) {
       const zusammenfassung = [
